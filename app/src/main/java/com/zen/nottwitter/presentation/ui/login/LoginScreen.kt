@@ -24,6 +24,7 @@ import com.zen.nottwitter.presentation.ui.component.AppIcon
 import com.zen.nottwitter.presentation.ui.component.EmailTextField
 import com.zen.nottwitter.presentation.ui.component.PasswordTextField
 import com.zen.nottwitter.presentation.ui.component.PrimaryButton
+import com.zen.nottwitter.presentation.ui.register.RegisterScreen
 
 class LoginScreen :
     BaseScreen<LoginViewModel, LoginUIState, LoginUIEffect, LoginInteractionListener>() {
@@ -36,7 +37,7 @@ class LoginScreen :
     override fun onEffect(effect: LoginUIEffect, navigator: Navigator) {
         when (effect) {
             LoginUIEffect.LoginSuccess -> {}
-            LoginUIEffect.NavigateToRegister -> {}
+            LoginUIEffect.NavigateToRegister -> navigator.push(RegisterScreen())
         }
     }
 
