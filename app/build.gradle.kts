@@ -52,6 +52,7 @@ android {
 dependencies {
     val voyagerVersion = "1.0.0"
     val koinVersion = "3.5.3"
+    val kotlinxDateTime = "0.5.0"
 
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
@@ -79,4 +80,8 @@ dependencies {
 
     // Koin
     implementation("io.insert-koin:koin-android:$koinVersion")
+
+    // kotlinx-datetime
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:$kotlinxDateTime")
+
 }
