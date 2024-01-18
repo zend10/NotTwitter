@@ -6,7 +6,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class LandingViewModel : BaseViewModel<LandingUIState, LandingUIEffect>(LandingUIState()), LandingInteractionListener {
+class LandingViewModel : BaseViewModel<LandingUIState, LandingUIEffect>(LandingUIState()),
+    LandingInteractionListener {
 
     init {
         loadUser()
