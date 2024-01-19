@@ -1,12 +1,14 @@
 package com.zen.nottwitter.presentation.ui.landing
 
 import cafe.adriel.voyager.core.model.screenModelScope
+import com.zen.nottwitter.data.repository.UserRepository
 import com.zen.nottwitter.presentation.ui.base.BaseViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class LandingViewModel : BaseViewModel<LandingUIState, LandingUIEffect>(LandingUIState()),
+class LandingViewModel(private val userRepository: UserRepository) :
+    BaseViewModel<LandingUIState, LandingUIEffect>(LandingUIState()),
     LandingInteractionListener {
 
     init {
@@ -15,8 +17,16 @@ class LandingViewModel : BaseViewModel<LandingUIState, LandingUIEffect>(LandingU
 
     private fun loadUser() {
         screenModelScope.launch(Dispatchers.IO) {
-            delay(2000)
-            sendNewEffect(LandingUIEffect.FirstTimeUser)
+            try {
+                val user = userRepository.authenticate()
+                if (user != null) {
+                    sendNewEffect(LandingUIEffect.AuthenticationSuccess)
+                } else {
+                    sendNewEffect(LandingUIEffect.FirstTimeUser)
+                }
+            } catch (exception: Exception) {
+                sendNewEffect(LandingUIEffect.AuthenticationFailed)
+            }
         }
     }
 }

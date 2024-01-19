@@ -6,6 +6,7 @@ import cafe.adriel.voyager.navigator.Navigator
 import com.zen.nottwitter.presentation.ui.base.BaseScreen
 import com.zen.nottwitter.presentation.ui.component.AppIcon
 import com.zen.nottwitter.presentation.ui.login.LoginScreen
+import com.zen.nottwitter.presentation.ui.main.MainScreen
 
 class LandingScreen :
     BaseScreen<LandingViewModel, LandingUIState, LandingUIEffect, LandingInteractionListener>() {
@@ -17,15 +18,9 @@ class LandingScreen :
 
     override fun onEffect(effect: LandingUIEffect, navigator: Navigator) {
         when (effect) {
-            is LandingUIEffect.FirstTimeUser -> {
-                navigator.replaceAll(LoginScreen())
-            }
-            is LandingUIEffect.UserVerificationFailed -> {
-
-            }
-            LandingUIEffect.UserVerificationSuccess -> {
-
-            }
+            is LandingUIEffect.FirstTimeUser -> navigator.replaceAll(LoginScreen())
+            is LandingUIEffect.AuthenticationSuccess -> navigator.replaceAll(MainScreen())
+            is LandingUIEffect.AuthenticationFailed -> navigator.replaceAll(LoginScreen())
         }
     }
 

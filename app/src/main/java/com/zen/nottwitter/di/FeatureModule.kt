@@ -7,7 +7,7 @@ import com.zen.nottwitter.presentation.ui.register.RegisterViewModel
 import org.koin.dsl.module
 
 val featureModule = module {
-    factory { LandingViewModel() }
+    factory { LandingViewModel(get()) }
     factory { LoginViewModel(get()) }
     factory { RegisterViewModel(get()) }
     factory { MainViewModel() }

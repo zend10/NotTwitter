@@ -9,8 +9,24 @@ import kotlinx.coroutines.tasks.await
 
 class DefaultFirebaseProvider(private val firebaseClient: FirebaseClient) : FirebaseProvider {
 
-    override suspend fun authenticate(): User {
-        return User("", "", "")
+    override suspend fun authenticate(): User? {
+        try {
+            val currentUser = firebaseClient.authClient().currentUser
+            return if (currentUser != null) {
+                val uid = currentUser.uid
+                val storedUser =
+                    firebaseClient.firestoreClient().collection(DB_USERS).document(uid).get().await()
+                val nickname =
+                    storedUser.data?.get(KEY_NICKNAME) as? String ?: throw LoginFailedException()
+                val email =
+                    storedUser.data?.get(KEY_EMAIL) as? String ?: throw LoginFailedException()
+                User(uid, nickname, email)
+            } else {
+                null
+            }
+        } catch (exception: Exception) {
+            throw exception
+        }
     }
 
     override suspend fun register(nickname: String, email: String, password: String): User {
