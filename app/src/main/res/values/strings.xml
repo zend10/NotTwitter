@@ -2,9 +2,14 @@
     <string name="app_name">NotTwitter</string>
     <string name="login">Login</string>
     <string name="password">Password</string>
-    <string name="password_placeholder">Must have 6–20 characters</string>
+    <string name="password_placeholder">Must have 6–32 characters</string>
     <string name="show_password">Show password</string>
     <string name="hide_password">Hide password</string>
     <string name="email">Email</string>
     <string name="register_here">Register here</string>
+    <string name="back_button">Back button</string>
+    <string name="register">Register</string>
+    <string name="nickname">Nickname</string>
+    <string name="nickname_placeholder">Must have 3–32 characters</string>
+    <string name="please_wait">Please wait</string>
 </resources>

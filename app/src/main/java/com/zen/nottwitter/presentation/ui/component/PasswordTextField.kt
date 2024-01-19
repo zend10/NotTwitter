@@ -9,6 +9,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
@@ -37,12 +38,12 @@ fun PasswordTextField(
         placeholderText = stringResource(id = R.string.password_placeholder),
         trailingIcon = {
             val icon = if (isPasswordVisible)
-                Icons.Default.ArrowBack
+                R.drawable.baseline_visibility_24
             else
-                Icons.Default.ArrowForward
+                R.drawable.baseline_visibility_off_24
             IconButton(onClick = onTrailingIconClick) {
                 Icon(
-                    imageVector = icon,
+                    painter = painterResource(id = icon),
                     contentDescription = if (isPasswordVisible)
                         stringResource(id = R.string.hide_password)
                     else
