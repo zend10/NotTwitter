@@ -2,6 +2,7 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("com.google.gms.google-services")
+    id("io.realm.kotlin")
 }
 
 android {
@@ -31,11 +32,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "11"
     }
     buildFeatures {
         compose = true
@@ -55,6 +56,7 @@ dependencies {
     val koinVersion = "3.5.3"
     val kotlinxDateTimeVersion = "0.5.0"
     val firebaseVersion = "32.7.1"
+    val realmVersion = "1.11.0"
 
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
@@ -92,4 +94,6 @@ dependencies {
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-firestore")
 
+    // Realm
+    implementation("io.realm.kotlin:library-base:$realmVersion")
 }
