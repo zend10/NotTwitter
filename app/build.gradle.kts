@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -52,7 +53,8 @@ android {
 dependencies {
     val voyagerVersion = "1.0.0"
     val koinVersion = "3.5.3"
-    val kotlinxDateTime = "0.5.0"
+    val kotlinxDateTimeVersion = "0.5.0"
+    val firebaseVersion = "32.7.1"
 
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
@@ -82,6 +84,12 @@ dependencies {
     implementation("io.insert-koin:koin-android:$koinVersion")
 
     // kotlinx-datetime
-    implementation("org.jetbrains.kotlinx:kotlinx-datetime:$kotlinxDateTime")
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:$kotlinxDateTimeVersion")
+
+    // Firebase
+    implementation(platform("com.google.firebase:firebase-bom:$firebaseVersion"))
+    implementation("com.google.firebase:firebase-analytics")
+    implementation("com.google.firebase:firebase-auth")
+    implementation("com.google.firebase:firebase-firestore")
 
 }
