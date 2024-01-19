@@ -8,5 +8,5 @@ import org.koin.dsl.module
 val featureModule = module {
     factory { LandingViewModel() }
     factory { LoginViewModel() }
-    factory { RegisterViewModel() }
+    factory { RegisterViewModel(get()) }
 }

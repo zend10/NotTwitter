@@ -16,6 +16,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.Navigator
@@ -40,7 +41,9 @@ class RegisterScreen :
 
     override fun onEffect(effect: RegisterUIEffect, navigator: Navigator) {
         when (effect) {
-            RegisterUIEffect.RegisterSuccess -> navigator.pop()
+            RegisterUIEffect.RegisterSuccess -> {
+                // navigate to Home
+            }
             RegisterUIEffect.NavigateBack -> navigator.pop()
         }
     }
@@ -96,7 +99,10 @@ class RegisterScreen :
                 Spacer(modifier = Modifier.weight(1f))
                 ErrorText(
                     text = state.errorMessage,
-                    modifier = Modifier.padding(vertical = 16.dp)
+                    modifier = Modifier
+                        .padding(vertical = 16.dp)
+                        .fillMaxWidth(),
+                    textAlign = TextAlign.Center
                 )
                 PrimaryButton(
                     onClick = listener::onRegisterClick,
