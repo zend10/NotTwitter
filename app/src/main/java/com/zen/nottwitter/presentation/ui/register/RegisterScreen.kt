@@ -29,6 +29,7 @@ import com.zen.nottwitter.presentation.ui.component.GeneralTextField
 import com.zen.nottwitter.presentation.ui.component.LoadingBarrier
 import com.zen.nottwitter.presentation.ui.component.PasswordTextField
 import com.zen.nottwitter.presentation.ui.component.PrimaryButton
+import com.zen.nottwitter.presentation.ui.main.MainScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 class RegisterScreen :
@@ -41,9 +42,7 @@ class RegisterScreen :
 
     override fun onEffect(effect: RegisterUIEffect, navigator: Navigator) {
         when (effect) {
-            RegisterUIEffect.RegisterSuccess -> {
-                // navigate to Home
-            }
+            RegisterUIEffect.RegisterSuccess -> navigator.replaceAll(MainScreen())
             RegisterUIEffect.NavigateBack -> navigator.pop()
         }
     }

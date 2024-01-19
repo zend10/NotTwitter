@@ -1,8 +1,15 @@
 package com.zen.nottwitter.presentation.ui.login
 
+import cafe.adriel.voyager.core.model.screenModelScope
+import com.zen.nottwitter.data.repository.UserRepository
+import com.zen.nottwitter.domain.isValidEmail
 import com.zen.nottwitter.presentation.ui.base.BaseViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
-class LoginViewModel : BaseViewModel<LoginUIState, LoginUIEffect>(LoginUIState()), LoginInteractionListener {
+class LoginViewModel(private val userRepository: UserRepository) :
+    BaseViewModel<LoginUIState, LoginUIEffect>(LoginUIState()),
+    LoginInteractionListener {
 
     override fun onEmailChange(email: String) {
         updateState {
@@ -33,12 +40,26 @@ class LoginViewModel : BaseViewModel<LoginUIState, LoginUIEffect>(LoginUIState()
     }
 
     override fun onLoginClick() {
-        updateState {
-            it.copy(errorMessage = "Oops")
+        screenModelScope.launch(Dispatchers.IO) {
+            try {
+                updateState { it.copy(isLoading = true) }
+                userRepository.login(state.value.email, state.value.password)
+                sendNewEffect(LoginUIEffect.LoginSuccess)
+            } catch (exception: Exception) {
+                updateState {
+                    it.copy(
+                        errorMessage = exception.localizedMessage ?: "Something went wrong."
+                    )
+                }
+            } finally {
+                updateState { it.copy(isLoading = false) }
+            }
         }
     }
 
     private fun isLoginButtonEnabled(email: String, password: String): Boolean {
-        return email.isNotBlank() && password.isNotBlank()
+        val isEmailValid = email.trim().isValidEmail()
+        val isPasswordValid = password.length in 6..32
+        return isEmailValid && isPasswordValid
     }
 }

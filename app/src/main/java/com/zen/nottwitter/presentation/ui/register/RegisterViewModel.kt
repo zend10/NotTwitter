@@ -75,8 +75,8 @@ class RegisterViewModel(private val userRepository: UserRepository) :
         email: String,
         password: String
     ): Boolean {
-        val isNicknameValid = nickname.length in 3..32
-        val isEmailValid = email.isValidEmail()
+        val isNicknameValid = nickname.trim().length in 3..32
+        val isEmailValid = email.trim().isValidEmail()
         val isPasswordValid = password.length in 6..32
         return isNicknameValid && isEmailValid && isPasswordValid
     }

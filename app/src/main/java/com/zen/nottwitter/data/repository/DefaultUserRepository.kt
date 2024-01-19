@@ -14,4 +14,14 @@ class DefaultUserRepository(private val firebaseProvider: FirebaseProvider) : Us
             throw exception
         }
     }
+
+    override suspend fun login(email: String, password: String): User {
+        try {
+            val user = firebaseProvider.login(email, password)
+            // save to DB
+            return user
+        } catch (exception: Exception) {
+            throw exception
+        }
+    }
 }
