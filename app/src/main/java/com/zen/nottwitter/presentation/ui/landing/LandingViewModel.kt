@@ -18,6 +18,7 @@ class LandingViewModel(private val userRepository: UserRepository) :
     private fun loadUser() {
         screenModelScope.launch(Dispatchers.IO) {
             try {
+                delay(2000)
                 val user = userRepository.authenticate()
                 if (user != null) {
                     sendNewEffect(LandingUIEffect.AuthenticationSuccess)
