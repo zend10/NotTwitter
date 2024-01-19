@@ -36,4 +36,8 @@ class DefaultUserRepository(private val firebaseProvider: FirebaseProvider) : Us
             throw exception
         }
     }
+
+    override suspend fun logout() {
+        firebaseProvider.logout()
+    }
 }

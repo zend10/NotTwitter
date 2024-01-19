@@ -25,6 +25,7 @@ class LandingViewModel(private val userRepository: UserRepository) :
                     sendNewEffect(LandingUIEffect.FirstTimeUser)
                 }
             } catch (exception: Exception) {
+                userRepository.logout()
                 sendNewEffect(LandingUIEffect.AuthenticationFailed)
             }
         }

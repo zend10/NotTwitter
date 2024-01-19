@@ -66,6 +66,10 @@ class DefaultFirebaseProvider(private val firebaseClient: FirebaseClient) : Fire
         }
     }
 
+    override suspend fun logout() {
+        firebaseClient.authClient().signOut()
+    }
+
     companion object {
         private const val DB_USERS = "users"
         private const val KEY_NICKNAME = "nickname"
