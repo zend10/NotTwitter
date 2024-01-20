@@ -7,9 +7,12 @@ interface EditorInteractionListener : BaseInteractionListener {
     fun onPostClick()
     fun onMessageChange(message: String)
     fun onAddImageClick()
+    fun onRemoveImageClick()
+    fun onImageClick()
     fun onBackDialogDismiss()
     fun onBackDialogPositiveCtaClick()
     fun onPostDialogDismiss()
     fun onPostDialogPositiveCtaClick()
     fun onPostErrorDialogDismiss()
+    fun onImageSelected(uriString: String?)
 }

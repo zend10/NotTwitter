@@ -1,11 +1,16 @@
 package com.zen.nottwitter.presentation.ui.editor
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.verticalScroll
@@ -18,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -25,6 +31,7 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.Navigator
+import coil.compose.AsyncImage
 import com.zen.nottwitter.R
 import com.zen.nottwitter.presentation.ui.base.BaseScreen
 import com.zen.nottwitter.presentation.ui.component.BackTopBar
@@ -44,12 +51,17 @@ class EditorScreen :
     override fun onEffect(effect: EditorUIEffect, navigator: Navigator) {
         when (effect) {
             EditorUIEffect.NavigateBack -> navigator.pop()
+            is EditorUIEffect.ViewImage -> {}
         }
     }
 
     @Composable
     override fun OnRender(state: EditorUIState, listener: EditorInteractionListener) {
         val focusManager = LocalFocusManager.current
+        val imagePickerLauncher = rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.PickVisualMedia(),
+            onResult = { uri -> listener.onImageSelected(uri?.toString()) }
+        )
 
         Scaffold(
             topBar = {
@@ -87,24 +99,7 @@ class EditorScreen :
                     singleLine = false,
                     maxLines = Int.MAX_VALUE
                 )
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 16.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    TextButton(onClick = { listener.onAddImageClick() }) {
-                        Text(text = stringResource(id = R.string.add_image))
-                    }
-                    Spacer(modifier = Modifier.weight(1f))
-                    Text(
-                        text = state.characterLimit,
-                        color = if (state.isOverCharacterLimit)
-                            MaterialTheme.colorScheme.error
-                        else
-                            Color.Unspecified
-                    )
-                }
+                UtilityBar(state, listener)
             }
         }
 
@@ -113,7 +108,53 @@ class EditorScreen :
             LoadingBarrier()
         }
 
+        if (state.showImagePicker) {
+            imagePickerLauncher
+                .launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+        }
+
         AlertDialog(state, listener)
+    }
+
+    @Composable
+    private fun UtilityBar(state: EditorUIState, listener: EditorInteractionListener) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp),
+            verticalAlignment = Alignment.Top
+        ) {
+            if (state.imageUriString.isNotBlank()) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    TextButton(onClick = { listener.onRemoveImageClick() }) {
+                        Text(text = stringResource(id = R.string.remove_image))
+                    }
+                    AsyncImage(
+                        model = state.imageUriString,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(100.dp)
+                            .clickable { listener.onImageClick() },
+                        contentScale = ContentScale.Crop
+                    )
+                }
+            } else {
+                TextButton(onClick = { listener.onAddImageClick() }) {
+                    Text(text = stringResource(id = R.string.add_image))
+                }
+            }
+            Spacer(modifier = Modifier.weight(1f))
+            Text(
+                text = state.characterLimit,
+                color = if (state.isOverCharacterLimit)
+                    MaterialTheme.colorScheme.error
+                else
+                    Color.Unspecified,
+                modifier = Modifier.padding(top = 12.dp)
+            )
+        }
     }
 
     @Composable
@@ -166,6 +207,14 @@ class EditorScreen :
                 TODO("Not yet implemented")
             }
 
+            override fun onRemoveImageClick() {
+                TODO("Not yet implemented")
+            }
+
+            override fun onImageClick() {
+                TODO("Not yet implemented")
+            }
+
             override fun onBackDialogDismiss() {
                 TODO("Not yet implemented")
             }
@@ -183,6 +232,10 @@ class EditorScreen :
             }
 
             override fun onPostErrorDialogDismiss() {
+                TODO("Not yet implemented")
+            }
+
+            override fun onImageSelected(uriString: String?) {
                 TODO("Not yet implemented")
             }
         })

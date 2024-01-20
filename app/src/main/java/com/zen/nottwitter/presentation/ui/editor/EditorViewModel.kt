@@ -15,7 +15,7 @@ class EditorViewModel(
     }
 
     override fun onBackButtonClick() {
-        if (state.value.message.trim().isNotBlank()) {
+        if (state.value.message.trim().isNotBlank() || state.value.imageUriString.isNotBlank()) {
             updateState { it.copy(showBackDialog = true) }
         } else {
             sendNewEffect(EditorUIEffect.NavigateBack)
@@ -32,13 +32,21 @@ class EditorViewModel(
                 message = message,
                 characterLimit = getCharacterLimitText(message),
                 isOverCharacterLimit = isOverCharacterLimit(message),
-                isPostButtonEnable = isPostButtonEnable(message)
+                isPostButtonEnable = isPostButtonEnable(message, it.imageUriString)
             )
         }
     }
 
     override fun onAddImageClick() {
-        // open file picker
+        updateState { it.copy(showImagePicker = true) }
+    }
+
+    override fun onRemoveImageClick() {
+        updateState { it.copy(imageUriString = "") }
+    }
+
+    override fun onImageClick() {
+        sendNewEffect(EditorUIEffect.ViewImage(state.value.imageUriString))
     }
 
     override fun onBackDialogDismiss() {
@@ -61,6 +69,16 @@ class EditorViewModel(
         updateState { it.copy(errorMessage = "") }
     }
 
+    override fun onImageSelected(uriString: String?) {
+        updateState {
+            it.copy(
+                imageUriString = uriString ?: "",
+                showImagePicker = false,
+                isPostButtonEnable = isPostButtonEnable(it.message, uriString ?: "")
+            )
+        }
+    }
+
     private fun getCharacterLimitText(message: String): String {
         val postConfig = configRepository.getPostConfig()
         return "${message.trim().length} / ${postConfig.messageMaxLength}"
@@ -71,9 +89,10 @@ class EditorViewModel(
         return message.trim().length > postConfig.messageMaxLength
     }
 
-    private fun isPostButtonEnable(message: String): Boolean {
+    private fun isPostButtonEnable(message: String, imageUriString: String): Boolean {
         val postConfig = configRepository.getPostConfig()
         val trimmedMessage = message.trim()
-        return trimmedMessage.isNotBlank() && trimmedMessage.length <= postConfig.messageMaxLength
+        return trimmedMessage.length <= postConfig.messageMaxLength &&
+                (trimmedMessage.isNotBlank() || imageUriString.isNotBlank())
     }
 }

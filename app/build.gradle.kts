@@ -60,6 +60,7 @@ dependencies {
     val mockkVersion = "1.13.9"
     val coroutinesVersion = "1.7.3"
     val turbineVersion = "1.0.0"
+    val coilVersion = "2.5.0"
 
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
@@ -105,4 +106,7 @@ dependencies {
 
     // Realm
     implementation("io.realm.kotlin:library-base:$realmVersion")
+
+    // Coil
+    implementation("io.coil-kt:coil-compose:$coilVersion")
 }

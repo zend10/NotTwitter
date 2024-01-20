@@ -20,6 +20,7 @@
     <string name="post">Post</string>
     <string name="post_placeholder">Share your thought in 280 characters or fewer</string>
     <string name="add_image">Add image</string>
+    <string name="remove_image">Remove image</string>
     <string name="back_dialog_title">Are you sure you want to leave?</string>
     <string name="back_dialog_message">You\'ll lose all your changes.</string>
     <string name="leave">Leave</string>
