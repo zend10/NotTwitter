@@ -8,5 +8,5 @@ interface RegisterInteractionListener : BaseInteractionListener {
     fun onPasswordChange(password: String)
     fun onPasswordTrailingIconClick()
     fun onRegisterClick()
-    fun onBackButtonPressed()
+    fun onBackButtonClick()
 }

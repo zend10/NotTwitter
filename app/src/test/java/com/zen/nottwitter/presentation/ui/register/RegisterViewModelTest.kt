@@ -106,10 +106,10 @@ class RegisterViewModelTest : BaseTest() {
     }
 
     @Test
-    fun `onBackButtonPressed will emit NavigateBack effect`() {
+    fun `onBackButtonClick will emit NavigateBack effect`() {
         runTest {
             viewModel.effect.test {
-                viewModel.onBackButtonPressed()
+                viewModel.onBackButtonClick()
                 assertEquals(RegisterUIEffect.NavigateBack, awaitItem())
             }
         }

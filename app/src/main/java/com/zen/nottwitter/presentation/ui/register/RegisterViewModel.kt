@@ -72,7 +72,7 @@ class RegisterViewModel(
         }
     }
 
-    override fun onBackButtonPressed() {
+    override fun onBackButtonClick() {
         sendNewEffect(RegisterUIEffect.NavigateBack)
     }
 

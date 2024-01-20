@@ -55,7 +55,7 @@ class RegisterScreen :
             topBar = {
                 BackTopBar(
                     title = stringResource(id = R.string.register),
-                    onBackButtonPressed = { listener.onBackButtonPressed() })
+                    onBackButtonPressed = { listener.onBackButtonClick() })
             }
         ) { paddingValues ->
             Column(
@@ -139,7 +139,7 @@ class RegisterScreen :
                     TODO("Not yet implemented")
                 }
 
-                override fun onBackButtonPressed() {
+                override fun onBackButtonClick() {
                     TODO("Not yet implemented")
                 }
 
