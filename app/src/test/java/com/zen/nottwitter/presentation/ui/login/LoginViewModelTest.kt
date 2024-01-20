@@ -1,8 +1,9 @@
 package com.zen.nottwitter.presentation.ui.login
 
 import app.cash.turbine.test
-import com.zen.nottwitter.data.model.User
+import com.zen.nottwitter.data.repository.ConfigRepository
 import com.zen.nottwitter.data.repository.UserRepository
+import com.zen.nottwitter.presentation.ui.base.BaseViewModelTest
 import com.zen.nottwitter.presentation.ui.base.MainCoroutineRule
 import com.zen.nottwitter.presentation.ui.base.TestDispatchers
 import io.mockk.MockKAnnotations
@@ -20,7 +21,7 @@ import org.junit.Rule
 import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class LoginViewModelTest {
+class LoginViewModelTest : BaseViewModelTest() {
 
     private val testDispatchers: TestDispatchers = TestDispatchers()
     private lateinit var viewModel: LoginViewModel
@@ -29,18 +30,20 @@ class LoginViewModelTest {
     @MockK
     private lateinit var userRepository: UserRepository
 
+    @MockK
+    private lateinit var configRepository: ConfigRepository
+
     @get:Rule
     val mainCoroutineRule = MainCoroutineRule(testDispatchers.testDispatcher)
 
-    private val stubTestEmail = "test@gmail.com"
-    private val stubTestPassword = "test-password"
-    private val stubTestUser = User("abc", "Bob", stubTestEmail)
-
     @Before
-    fun setUp() {
-        MockKAnnotations.init(this, relaxUnitFun = true)
-        viewModel = LoginViewModel(userRepository, testDispatchers)
+    override fun setUp() {
+        super.setUp()
+        viewModel = LoginViewModel(userRepository, configRepository, testDispatchers)
         state = viewModel.state
+
+        every { configRepository.getUserConfig() } returns stubTestUserConfig
+        every { configRepository.getFallbackErrorMessage() } returns stubTestFallbackErrorMessage
     }
 
     @Test
@@ -129,7 +132,7 @@ class LoginViewModelTest {
                 assertEquals(stubTestErrorMessage, state.value.errorMessage)
 
                 viewModel.onLoginClick()
-                assertEquals("Something went wrong.", state.value.errorMessage)
+                assertEquals(stubTestFallbackErrorMessage, state.value.errorMessage)
 
                 coVerify(exactly = 2) { userRepository.login(stubTestEmail, stubTestPassword) }
                 expectNoEvents()
