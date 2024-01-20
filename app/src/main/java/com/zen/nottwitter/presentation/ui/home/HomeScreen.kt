@@ -18,6 +18,7 @@ import com.zen.nottwitter.R
 import com.zen.nottwitter.presentation.ui.base.BaseScreen
 import com.zen.nottwitter.presentation.ui.component.ActionTopBar
 import com.zen.nottwitter.presentation.ui.component.EmptyScreen
+import com.zen.nottwitter.presentation.ui.editor.EditorScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 class HomeScreen : BaseScreen<HomeViewModel, HomeUIState, HomeUIEffect, HomeInteractionListener>() {
@@ -29,7 +30,7 @@ class HomeScreen : BaseScreen<HomeViewModel, HomeUIState, HomeUIEffect, HomeInte
 
     override fun onEffect(effect: HomeUIEffect, navigator: Navigator) {
         when (effect) {
-            HomeUIEffect.NavigateToPostEditor -> {}
+            HomeUIEffect.NavigateToPostEditor -> navigator.push(EditorScreen())
             is HomeUIEffect.ViewImage -> {}
             is HomeUIEffect.ViewPost -> {}
         }
