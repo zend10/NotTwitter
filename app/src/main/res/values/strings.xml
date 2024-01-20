@@ -15,4 +15,6 @@
     <string name="home">Home</string>
     <string name="profile">Profile</string>
     <string name="logout">Logout</string>
+    <string name="new_post">New Post</string>
+    <string name="empty_text">There\'s nothing yet. Please post something.</string>
 </resources>

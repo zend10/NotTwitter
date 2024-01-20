@@ -6,4 +6,7 @@ import com.zen.nottwitter.presentation.ui.base.DispatcherProvider
 class HomeViewModel(dispatchers: DispatcherProvider) :
     BaseViewModel<HomeUIState, HomeUIEffect>(HomeUIState(), dispatchers), HomeInteractionListener {
 
+    override fun onNewPostClick() {
+
+    }
 }
