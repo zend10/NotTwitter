@@ -1,5 +1,6 @@
 package com.zen.nottwitter.data.repository
 
+import com.zen.nottwitter.data.model.PostConfig
 import com.zen.nottwitter.data.model.UserConfig
 
 class DefaultConfigRepository : ConfigRepository {
@@ -15,5 +16,11 @@ class DefaultConfigRepository : ConfigRepository {
 
     override fun getFallbackErrorMessage(): String {
         return "Something went wrong."
+    }
+
+    override fun getPostConfig(): PostConfig {
+        return PostConfig(
+            messageMaxLength = 280
+        )
     }
 }
