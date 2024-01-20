@@ -3,7 +3,6 @@ package com.zen.nottwitter.presentation.ui.base
 import cafe.adriel.voyager.core.model.StateScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import com.zen.nottwitter.domain.TimeUtils
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -12,7 +11,9 @@ import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-abstract class BaseViewModel<S, E>(initialState: S) : StateScreenModel<S>(initialState), BaseInteractionListener {
+abstract class BaseViewModel<S, E>(initialState: S, protected val dispatchers: DispatcherProvider) :
+    StateScreenModel<S>(initialState),
+    BaseInteractionListener {
 
     private val _effect = MutableSharedFlow<E?>()
     val effect = _effect.asSharedFlow().throttleFirst(500).mapNotNull { it }
@@ -22,7 +23,7 @@ abstract class BaseViewModel<S, E>(initialState: S) : StateScreenModel<S>(initia
     }
 
     protected fun sendNewEffect(newEffect: E) {
-        screenModelScope.launch(Dispatchers.IO) {
+        screenModelScope.launch(dispatchers.io) {
             _effect.emit(newEffect)
         }
     }
@@ -40,4 +41,4 @@ abstract class BaseViewModel<S, E>(initialState: S) : StateScreenModel<S>(initia
             }
         }
     }
- }
+}

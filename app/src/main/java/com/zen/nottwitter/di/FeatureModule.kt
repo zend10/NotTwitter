@@ -1,5 +1,7 @@
 package com.zen.nottwitter.di
 
+import com.zen.nottwitter.presentation.ui.base.DefaultDispatchers
+import com.zen.nottwitter.presentation.ui.base.DispatcherProvider
 import com.zen.nottwitter.presentation.ui.landing.LandingViewModel
 import com.zen.nottwitter.presentation.ui.login.LoginViewModel
 import com.zen.nottwitter.presentation.ui.main.MainViewModel
@@ -7,8 +9,9 @@ import com.zen.nottwitter.presentation.ui.register.RegisterViewModel
 import org.koin.dsl.module
 
 val featureModule = module {
-    factory { LandingViewModel(get()) }
-    factory { LoginViewModel(get()) }
-    factory { RegisterViewModel(get()) }
-    factory { MainViewModel() }
+    factory<DispatcherProvider> { DefaultDispatchers() }
+    factory { LandingViewModel(get(), get()) }
+    factory { LoginViewModel(get(), get()) }
+    factory { RegisterViewModel(get(), get()) }
+    factory { MainViewModel(get()) }
 }

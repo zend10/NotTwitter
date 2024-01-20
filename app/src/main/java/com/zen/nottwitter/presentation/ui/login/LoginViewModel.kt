@@ -4,11 +4,11 @@ import cafe.adriel.voyager.core.model.screenModelScope
 import com.zen.nottwitter.data.repository.UserRepository
 import com.zen.nottwitter.domain.isValidEmail
 import com.zen.nottwitter.presentation.ui.base.BaseViewModel
-import kotlinx.coroutines.Dispatchers
+import com.zen.nottwitter.presentation.ui.base.DispatcherProvider
 import kotlinx.coroutines.launch
 
-class LoginViewModel(private val userRepository: UserRepository) :
-    BaseViewModel<LoginUIState, LoginUIEffect>(LoginUIState()),
+class LoginViewModel(private val userRepository: UserRepository, dispatchers: DispatcherProvider) :
+    BaseViewModel<LoginUIState, LoginUIEffect>(LoginUIState(), dispatchers),
     LoginInteractionListener {
 
     override fun onEmailChange(email: String) {
@@ -40,7 +40,7 @@ class LoginViewModel(private val userRepository: UserRepository) :
     }
 
     override fun onLoginClick() {
-        screenModelScope.launch(Dispatchers.IO) {
+        screenModelScope.launch(dispatchers.io) {
             try {
                 updateState { it.copy(isLoading = true) }
                 userRepository.login(state.value.email, state.value.password)

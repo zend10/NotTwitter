@@ -3,12 +3,15 @@ package com.zen.nottwitter.presentation.ui.landing
 import cafe.adriel.voyager.core.model.screenModelScope
 import com.zen.nottwitter.data.repository.UserRepository
 import com.zen.nottwitter.presentation.ui.base.BaseViewModel
-import kotlinx.coroutines.Dispatchers
+import com.zen.nottwitter.presentation.ui.base.DispatcherProvider
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class LandingViewModel(private val userRepository: UserRepository) :
-    BaseViewModel<LandingUIState, LandingUIEffect>(LandingUIState()),
+class LandingViewModel(
+    private val userRepository: UserRepository,
+    dispatchers: DispatcherProvider
+) :
+    BaseViewModel<LandingUIState, LandingUIEffect>(LandingUIState(), dispatchers),
     LandingInteractionListener {
 
     init {
@@ -16,7 +19,7 @@ class LandingViewModel(private val userRepository: UserRepository) :
     }
 
     private fun loadUser() {
-        screenModelScope.launch(Dispatchers.IO) {
+        screenModelScope.launch(dispatchers.io) {
             try {
                 delay(2000)
                 val user = userRepository.authenticate()

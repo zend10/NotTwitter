@@ -4,11 +4,14 @@ import cafe.adriel.voyager.core.model.screenModelScope
 import com.zen.nottwitter.data.repository.UserRepository
 import com.zen.nottwitter.domain.isValidEmail
 import com.zen.nottwitter.presentation.ui.base.BaseViewModel
-import kotlinx.coroutines.Dispatchers
+import com.zen.nottwitter.presentation.ui.base.DispatcherProvider
 import kotlinx.coroutines.launch
 
-class RegisterViewModel(private val userRepository: UserRepository) :
-    BaseViewModel<RegisterUIState, RegisterUIEffect>(RegisterUIState()),
+class RegisterViewModel(
+    private val userRepository: UserRepository,
+    dispatchers: DispatcherProvider
+) :
+    BaseViewModel<RegisterUIState, RegisterUIEffect>(RegisterUIState(), dispatchers),
     RegisterInteractionListener {
 
     override fun onNicknameChange(nickname: String) {
@@ -45,7 +48,7 @@ class RegisterViewModel(private val userRepository: UserRepository) :
     }
 
     override fun onRegisterClick() {
-        screenModelScope.launch(Dispatchers.IO) {
+        screenModelScope.launch(dispatchers.io) {
             try {
                 updateState { it.copy(isLoading = true) }
                 userRepository.register(
