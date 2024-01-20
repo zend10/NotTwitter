@@ -11,7 +11,7 @@ import org.koin.dsl.module
 val featureModule = module {
     factory<DispatcherProvider> { DefaultDispatchers() }
     factory { LandingViewModel(get(), get()) }
-    factory { LoginViewModel(get(), get()) }
-    factory { RegisterViewModel(get(), get()) }
+    factory { LoginViewModel(get(), get(), get()) }
+    factory { RegisterViewModel(get(), get(), get()) }
     factory { MainViewModel(get()) }
 }

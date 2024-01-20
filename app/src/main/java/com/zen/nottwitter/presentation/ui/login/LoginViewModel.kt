@@ -1,13 +1,18 @@
 package com.zen.nottwitter.presentation.ui.login
 
 import cafe.adriel.voyager.core.model.screenModelScope
+import com.zen.nottwitter.data.repository.ConfigRepository
 import com.zen.nottwitter.data.repository.UserRepository
 import com.zen.nottwitter.domain.isValidEmail
 import com.zen.nottwitter.presentation.ui.base.BaseViewModel
 import com.zen.nottwitter.presentation.ui.base.DispatcherProvider
 import kotlinx.coroutines.launch
 
-class LoginViewModel(private val userRepository: UserRepository, dispatchers: DispatcherProvider) :
+class LoginViewModel(
+    private val userRepository: UserRepository,
+    private val configRepository: ConfigRepository,
+    dispatchers: DispatcherProvider
+) :
     BaseViewModel<LoginUIState, LoginUIEffect>(LoginUIState(), dispatchers),
     LoginInteractionListener {
 
@@ -46,9 +51,10 @@ class LoginViewModel(private val userRepository: UserRepository, dispatchers: Di
                 userRepository.login(state.value.email, state.value.password)
                 sendNewEffect(LoginUIEffect.LoginSuccess)
             } catch (exception: Exception) {
+                val fallbackErrorMessage = configRepository.getFallbackErrorMessage()
                 updateState {
                     it.copy(
-                        errorMessage = exception.localizedMessage ?: "Something went wrong."
+                        errorMessage = exception.localizedMessage ?: fallbackErrorMessage
                     )
                 }
             } finally {
@@ -58,8 +64,10 @@ class LoginViewModel(private val userRepository: UserRepository, dispatchers: Di
     }
 
     private fun isLoginButtonEnabled(email: String, password: String): Boolean {
+        val userConfig = configRepository.getUserConfig()
         val isEmailValid = email.trim().isValidEmail()
-        val isPasswordValid = password.length in 6..32
+        val isPasswordValid =
+            password.length in userConfig.passwordMinLength..userConfig.passwordMaxLength
         return isEmailValid && isPasswordValid
     }
 }

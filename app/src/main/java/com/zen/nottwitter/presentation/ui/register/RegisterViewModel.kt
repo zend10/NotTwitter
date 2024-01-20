@@ -1,6 +1,7 @@
 package com.zen.nottwitter.presentation.ui.register
 
 import cafe.adriel.voyager.core.model.screenModelScope
+import com.zen.nottwitter.data.repository.ConfigRepository
 import com.zen.nottwitter.data.repository.UserRepository
 import com.zen.nottwitter.domain.isValidEmail
 import com.zen.nottwitter.presentation.ui.base.BaseViewModel
@@ -9,6 +10,7 @@ import kotlinx.coroutines.launch
 
 class RegisterViewModel(
     private val userRepository: UserRepository,
+    private val configRepository: ConfigRepository,
     dispatchers: DispatcherProvider
 ) :
     BaseViewModel<RegisterUIState, RegisterUIEffect>(RegisterUIState(), dispatchers),
@@ -58,9 +60,10 @@ class RegisterViewModel(
                 )
                 sendNewEffect(RegisterUIEffect.RegisterSuccess)
             } catch (exception: Exception) {
+                val fallbackErrorMessage = configRepository.getFallbackErrorMessage()
                 updateState {
                     it.copy(
-                        errorMessage = exception.localizedMessage ?: "Something went wrong."
+                        errorMessage = exception.localizedMessage ?: fallbackErrorMessage
                     )
                 }
             } finally {
@@ -78,9 +81,12 @@ class RegisterViewModel(
         email: String,
         password: String
     ): Boolean {
-        val isNicknameValid = nickname.trim().length in 3..32
+        val userConfig = configRepository.getUserConfig()
+        val isNicknameValid =
+            nickname.trim().length in userConfig.nicknameMinLength..userConfig.nicknameMaxLength
         val isEmailValid = email.trim().isValidEmail()
-        val isPasswordValid = password.length in 6..32
+        val isPasswordValid =
+            password.length in userConfig.passwordMinLength..userConfig.passwordMaxLength
         return isNicknameValid && isEmailValid && isPasswordValid
     }
 }
