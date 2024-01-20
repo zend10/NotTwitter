@@ -12,4 +12,6 @@
     <string name="nickname">Nickname</string>
     <string name="nickname_placeholder">Must have 3–32 characters</string>
     <string name="please_wait">Please wait</string>
+    <string name="home">Home</string>
+    <string name="profile">Profile</string>
 </resources>
