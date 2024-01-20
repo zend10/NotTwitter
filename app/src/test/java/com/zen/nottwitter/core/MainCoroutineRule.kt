@@ -1,4 +1,4 @@
-package com.zen.nottwitter.presentation.ui.base
+package com.zen.nottwitter.core
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi

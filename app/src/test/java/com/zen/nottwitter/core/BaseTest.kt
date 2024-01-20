@@ -1,4 +1,4 @@
-package com.zen.nottwitter.presentation.ui.base
+package com.zen.nottwitter.core
 
 import com.zen.nottwitter.data.model.User
 import com.zen.nottwitter.data.model.UserConfig
@@ -6,7 +6,7 @@ import io.mockk.MockKAnnotations
 import org.junit.After
 import org.junit.Before
 
-abstract class BaseViewModelTest {
+abstract class BaseTest {
 
     protected val stubTestUserConfig = UserConfig(
         nicknameMinLength = 3,

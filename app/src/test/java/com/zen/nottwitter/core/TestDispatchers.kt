@@ -1,5 +1,6 @@
-package com.zen.nottwitter.presentation.ui.base
+package com.zen.nottwitter.core
 
+import com.zen.nottwitter.presentation.ui.base.DispatcherProvider
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.UnconfinedTestDispatcher

@@ -3,9 +3,9 @@ package com.zen.nottwitter.presentation.ui.register
 import app.cash.turbine.test
 import com.zen.nottwitter.data.repository.ConfigRepository
 import com.zen.nottwitter.data.repository.UserRepository
-import com.zen.nottwitter.presentation.ui.base.BaseViewModelTest
-import com.zen.nottwitter.presentation.ui.base.MainCoroutineRule
-import com.zen.nottwitter.presentation.ui.base.TestDispatchers
+import com.zen.nottwitter.core.BaseTest
+import com.zen.nottwitter.core.MainCoroutineRule
+import com.zen.nottwitter.core.TestDispatchers
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -20,7 +20,7 @@ import org.junit.Rule
 import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class RegisterViewModelTest : BaseViewModelTest() {
+class RegisterViewModelTest : BaseTest() {
 
     private val testDispatchers: TestDispatchers = TestDispatchers()
     private lateinit var viewModel: RegisterViewModel
