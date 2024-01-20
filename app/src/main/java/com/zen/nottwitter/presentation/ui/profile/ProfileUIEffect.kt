@@ -1,3 +1,5 @@
 package com.zen.nottwitter.presentation.ui.profile
 
-sealed interface ProfileUIEffect
+sealed interface ProfileUIEffect {
+    object Logout : ProfileUIEffect
+}

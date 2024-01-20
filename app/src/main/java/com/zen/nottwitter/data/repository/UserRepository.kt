@@ -8,5 +8,6 @@ interface UserRepository {
     suspend fun login(email: String, password: String): User
     suspend fun logout()
 
+    @Throws(NoSuchElementException::class)
     suspend fun getUser(): User
 }

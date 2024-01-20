@@ -17,5 +17,5 @@ val featureModule = module {
     factory { RegisterViewModel(get(), get(), get()) }
     factory { MainViewModel(get()) }
     factory { HomeViewModel(get()) }
-    factory { ProfileViewModel(get()) }
+    factory { ProfileViewModel(get(), get()) }
 }
