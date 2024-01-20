@@ -1,3 +1,5 @@
 package com.zen.nottwitter.presentation.ui.editor
 
-sealed interface EditorUIEffect
+sealed interface EditorUIEffect {
+    object NavigateBack : EditorUIEffect
+}

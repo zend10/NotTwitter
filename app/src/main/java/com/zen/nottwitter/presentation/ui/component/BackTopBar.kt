@@ -15,7 +15,12 @@ import com.zen.nottwitter.R
 
 @ExperimentalMaterial3Api
 @Composable
-fun BackTopBar(title: String, onBackButtonPressed: () -> Unit, modifier: Modifier = Modifier) {
+fun BackTopBar(
+    title: String,
+    onBackButtonPressed: () -> Unit,
+    modifier: Modifier = Modifier,
+    actionItem: @Composable () -> Unit = {}
+) {
     TopAppBar(
         title = { Text(text = title) },
         modifier = modifier,
@@ -23,6 +28,9 @@ fun BackTopBar(title: String, onBackButtonPressed: () -> Unit, modifier: Modifie
             IconButton(onClick = onBackButtonPressed) {
                 Icon(Icons.Default.ArrowBack, stringResource(id = R.string.back_button))
             }
+        },
+        actions = {
+            actionItem()
         }
     )
 }

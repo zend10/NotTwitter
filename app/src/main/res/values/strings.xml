@@ -17,4 +17,15 @@
     <string name="logout">Logout</string>
     <string name="new_post">New Post</string>
     <string name="empty_text">There\'s nothing yet. Please post something.</string>
+    <string name="post">Post</string>
+    <string name="post_placeholder">Share your thought in 280 characters or fewer</string>
+    <string name="add_image">Add image</string>
+    <string name="back_dialog_title">Are you sure you want to leave?</string>
+    <string name="back_dialog_message">You\'ll lose all your changes.</string>
+    <string name="leave">Leave</string>
+    <string name="cancel">Cancel</string>
+    <string name="post_dialog_title">Send post</string>
+    <string name="post_dialog_message">This post will be visible to everyone.</string>
+    <string name="post_error_dialog_title">Failed to send post</string>
+    <string name="ok">OK</string>
 </resources>

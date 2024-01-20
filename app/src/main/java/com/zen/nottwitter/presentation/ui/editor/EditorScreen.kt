@@ -1,12 +1,40 @@
 package com.zen.nottwitter.presentation.ui.editor
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.Navigator
+import com.zen.nottwitter.R
 import com.zen.nottwitter.presentation.ui.base.BaseScreen
+import com.zen.nottwitter.presentation.ui.component.BackTopBar
+import com.zen.nottwitter.presentation.ui.component.GeneralAlertDialog
+import com.zen.nottwitter.presentation.ui.component.GeneralTextField
+import com.zen.nottwitter.presentation.ui.component.LoadingBarrier
 
-class EditorScreen : BaseScreen<EditorViewModel, EditorUIState, EditorUIEffect, EditorInteractionListener>() {
+@OptIn(ExperimentalMaterial3Api::class)
+class EditorScreen :
+    BaseScreen<EditorViewModel, EditorUIState, EditorUIEffect, EditorInteractionListener>() {
 
     @Composable
     override fun Content() {
@@ -15,20 +43,148 @@ class EditorScreen : BaseScreen<EditorViewModel, EditorUIState, EditorUIEffect, 
 
     override fun onEffect(effect: EditorUIEffect, navigator: Navigator) {
         when (effect) {
-            else -> {}
+            EditorUIEffect.NavigateBack -> navigator.pop()
         }
     }
-    
+
     @Composable
     override fun OnRender(state: EditorUIState, listener: EditorInteractionListener) {
-        Text(text = "Editor")
+        val focusManager = LocalFocusManager.current
+
+        Scaffold(
+            topBar = {
+                BackTopBar(
+                    title = stringResource(id = R.string.new_post),
+                    onBackButtonPressed = listener::onBackButtonClick,
+                    actionItem = {
+                        TextButton(
+                            onClick = listener::onPostClick,
+                            enabled = state.isPostButtonEnable
+                        ) {
+                            Text(text = stringResource(id = R.string.post))
+                        }
+                    }
+                )
+            }
+        ) { paddingValues ->
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+                    .padding(16.dp)
+                    .verticalScroll(rememberScrollState())
+            ) {
+                GeneralTextField(
+                    text = state.message,
+                    onValueChange = listener::onMessageChange,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+                    placeholderText = stringResource(id = R.string.post_placeholder),
+                    capitalization = KeyboardCapitalization.Sentences,
+                    imeAction = ImeAction.Go,
+                    keyboardActions = KeyboardActions(onGo = { listener.onPostClick() }),
+                    singleLine = false,
+                    maxLines = Int.MAX_VALUE
+                )
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    TextButton(onClick = { listener.onAddImageClick() }) {
+                        Text(text = stringResource(id = R.string.add_image))
+                    }
+                    Spacer(modifier = Modifier.weight(1f))
+                    Text(
+                        text = state.characterLimit,
+                        color = if (state.isOverCharacterLimit)
+                            MaterialTheme.colorScheme.error
+                        else
+                            Color.Unspecified
+                    )
+                }
+            }
+        }
+
+        if (state.isLoading) {
+            focusManager.clearFocus()
+            LoadingBarrier()
+        }
+
+        AlertDialog(state, listener)
     }
-    
+
+    @Composable
+    private fun AlertDialog(state: EditorUIState, listener: EditorInteractionListener) {
+        if (state.showBackDialog) {
+            GeneralAlertDialog(
+                onDismissRequest = listener::onBackDialogDismiss,
+                title = stringResource(R.string.back_dialog_title),
+                message = stringResource(R.string.back_dialog_message),
+                positiveCta = stringResource(R.string.leave),
+                negativeCta = stringResource(R.string.cancel),
+                onPositiveCtaClick = listener::onBackDialogPositiveCtaClick
+            )
+        } else if (state.showPostDialog) {
+            GeneralAlertDialog(
+                onDismissRequest = listener::onPostDialogDismiss,
+                title = stringResource(R.string.post_dialog_title),
+                message = stringResource(R.string.post_dialog_message),
+                positiveCta = stringResource(id = R.string.post),
+                negativeCta = stringResource(id = R.string.cancel),
+                onPositiveCtaClick = listener::onPostDialogPositiveCtaClick
+            )
+        } else if (state.errorMessage.isNotBlank()) {
+            GeneralAlertDialog(
+                onDismissRequest = listener::onPostErrorDialogDismiss,
+                title = stringResource(R.string.post_error_dialog_title),
+                message = state.errorMessage,
+                positiveCta = stringResource(R.string.ok),
+            )
+        }
+    }
+
     @Preview(showSystemUi = true)
     @Composable
     private fun EditorScreenPreview() {
         OnRender(state = EditorUIState(), listener = object : EditorInteractionListener {
-            
+            override fun onBackButtonClick() {
+                TODO("Not yet implemented")
+            }
+
+            override fun onPostClick() {
+                TODO("Not yet implemented")
+            }
+
+            override fun onMessageChange(message: String) {
+                TODO("Not yet implemented")
+            }
+
+            override fun onAddImageClick() {
+                TODO("Not yet implemented")
+            }
+
+            override fun onBackDialogDismiss() {
+                TODO("Not yet implemented")
+            }
+
+            override fun onBackDialogPositiveCtaClick() {
+                TODO("Not yet implemented")
+            }
+
+            override fun onPostDialogDismiss() {
+                TODO("Not yet implemented")
+            }
+
+            override fun onPostDialogPositiveCtaClick() {
+                TODO("Not yet implemented")
+            }
+
+            override fun onPostErrorDialogDismiss() {
+                TODO("Not yet implemented")
+            }
         })
     }
 }

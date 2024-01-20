@@ -1,5 +1,12 @@
 package com.zen.nottwitter.presentation.ui.editor
 
 data class EditorUIState(
-    val message: String = ""
+    val isLoading: Boolean = false,
+    val message: String = "",
+    val characterLimit: String = "",
+    val isOverCharacterLimit: Boolean = false,
+    val isPostButtonEnable: Boolean = false,
+    val showBackDialog: Boolean = false,
+    val showPostDialog: Boolean = false,
+    val errorMessage: String = "",
 )
