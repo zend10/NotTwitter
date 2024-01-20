@@ -52,6 +52,7 @@ class EditorScreen :
         when (effect) {
             EditorUIEffect.NavigateBack -> navigator.pop()
             is EditorUIEffect.ViewImage -> {}
+            EditorUIEffect.CreatePostSuccess -> navigator.pop()
         }
     }
 

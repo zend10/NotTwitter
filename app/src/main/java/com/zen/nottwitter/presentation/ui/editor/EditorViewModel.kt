@@ -1,11 +1,16 @@
 package com.zen.nottwitter.presentation.ui.editor
 
+import cafe.adriel.voyager.core.model.screenModelScope
 import com.zen.nottwitter.data.repository.ConfigRepository
+import com.zen.nottwitter.domain.usecase.CreatePostRequest
+import com.zen.nottwitter.domain.usecase.CreatePostUseCase
 import com.zen.nottwitter.presentation.ui.base.BaseViewModel
 import com.zen.nottwitter.presentation.ui.base.DispatcherProvider
+import kotlinx.coroutines.launch
 
 class EditorViewModel(
     private val configRepository: ConfigRepository,
+    private val createPostUseCase: CreatePostUseCase,
     dispatchers: DispatcherProvider
 ) : BaseViewModel<EditorUIState, EditorUIEffect>(EditorUIState(), dispatchers),
     EditorInteractionListener {
@@ -62,7 +67,27 @@ class EditorViewModel(
     }
 
     override fun onPostDialogPositiveCtaClick() {
-        // send to firebase
+        screenModelScope.launch(dispatchers.io) {
+            try {
+                updateState { it.copy(isLoading = true) }
+                createPostUseCase.execute(
+                    CreatePostRequest(
+                        state.value.message.trim(),
+                        state.value.imageUriString
+                    )
+                )
+                sendNewEffect(EditorUIEffect.CreatePostSuccess)
+            } catch (exception: Exception) {
+                val fallbackErrorMessage = configRepository.getFallbackErrorMessage()
+                updateState {
+                    it.copy(
+                        errorMessage = exception.localizedMessage ?: fallbackErrorMessage
+                    )
+                }
+            } finally {
+                updateState { it.copy(isLoading = false) }
+            }
+        }
     }
 
     override fun onPostErrorDialogDismiss() {
