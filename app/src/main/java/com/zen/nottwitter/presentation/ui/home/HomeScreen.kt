@@ -29,7 +29,9 @@ class HomeScreen : BaseScreen<HomeViewModel, HomeUIState, HomeUIEffect, HomeInte
 
     override fun onEffect(effect: HomeUIEffect, navigator: Navigator) {
         when (effect) {
-            else -> {}
+            HomeUIEffect.NavigateToPostEditor -> {}
+            is HomeUIEffect.ViewImage -> {}
+            is HomeUIEffect.ViewPost -> {}
         }
     }
 
@@ -52,7 +54,11 @@ class HomeScreen : BaseScreen<HomeViewModel, HomeUIState, HomeUIEffect, HomeInte
                 )
             }
         ) { paddingValues ->
-            EmptyScreen(modifier = Modifier.padding(paddingValues))
+            if (state.posts.isEmpty()) {
+                EmptyScreen(modifier = Modifier.padding(paddingValues))
+            } else {
+
+            }
         }
     }
 
@@ -61,6 +67,14 @@ class HomeScreen : BaseScreen<HomeViewModel, HomeUIState, HomeUIEffect, HomeInte
     private fun HomeScreenPreview() {
         OnRender(state = HomeUIState(), listener = object : HomeInteractionListener {
             override fun onNewPostClick() {
+                TODO("Not yet implemented")
+            }
+
+            override fun onPostClick(uid: String) {
+                TODO("Not yet implemented")
+            }
+
+            override fun onPostImageClick(imageUrl: String) {
                 TODO("Not yet implemented")
             }
         })
