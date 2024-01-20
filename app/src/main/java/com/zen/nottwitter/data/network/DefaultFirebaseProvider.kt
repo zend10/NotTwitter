@@ -1,10 +1,9 @@
-package com.zen.nottwitter.data.provider
+package com.zen.nottwitter.data.network
 
 import com.google.firebase.firestore.FieldValue
 import com.zen.nottwitter.data.exception.LoginFailedException
 import com.zen.nottwitter.data.exception.RegisterFailedException
 import com.zen.nottwitter.data.model.User
-import com.zen.nottwitter.data.network.FirebaseClient
 import kotlinx.coroutines.tasks.await
 
 class DefaultFirebaseProvider(private val firebaseClient: FirebaseClient) : FirebaseProvider {

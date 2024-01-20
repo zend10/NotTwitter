@@ -2,7 +2,7 @@ package com.zen.nottwitter.data.repository
 
 import com.zen.nottwitter.core.BaseTest
 import com.zen.nottwitter.data.localstorage.LocalStorageProvider
-import com.zen.nottwitter.data.provider.FirebaseProvider
+import com.zen.nottwitter.data.network.FirebaseProvider
 import io.mockk.called
 import io.mockk.coEvery
 import io.mockk.coVerify

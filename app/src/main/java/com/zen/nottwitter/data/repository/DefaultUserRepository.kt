@@ -2,7 +2,7 @@ package com.zen.nottwitter.data.repository
 
 import com.zen.nottwitter.data.localstorage.LocalStorageProvider
 import com.zen.nottwitter.data.model.User
-import com.zen.nottwitter.data.provider.FirebaseProvider
+import com.zen.nottwitter.data.network.FirebaseProvider
 
 class DefaultUserRepository(
     private val firebaseProvider: FirebaseProvider,

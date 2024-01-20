@@ -1,4 +1,4 @@
-package com.zen.nottwitter.data.provider
+package com.zen.nottwitter.data.network
 
 import com.zen.nottwitter.data.model.User
 
