@@ -1,7 +1,6 @@
 package com.zen.nottwitter.domain
 
-import android.util.Patterns
-
 fun String.isValidEmail(): Boolean {
-    return Patterns.EMAIL_ADDRESS.matcher(this).matches()
+    val emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\$"
+    return this.matches(emailRegex.toRegex())
 }
