@@ -74,7 +74,7 @@ class LoginViewModelTest {
         assertEquals(false, state.value.isLoginButtonEnabled)
 
         // invalid password more than 32 characters
-        viewModel.onPasswordChange("abcabcabcabcabcabcabcabcabcabcabcabc")
+        viewModel.onPasswordChange("abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz")
         assertEquals(false, state.value.isLoginButtonEnabled)
     }
 
