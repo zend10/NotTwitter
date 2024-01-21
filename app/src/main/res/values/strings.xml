@@ -30,4 +30,6 @@
     <string name="post_error_dialog_title">Failed to send post</string>
     <string name="ok">OK</string>
     <string name="just_now">Just now</string>
+    <string name="logout_dialog_title">Logout</string>
+    <string name="logout_dialog_message">We hope to see you again.</string>
 </resources>

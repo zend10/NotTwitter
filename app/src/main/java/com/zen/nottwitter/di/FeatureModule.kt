@@ -20,7 +20,7 @@ val featureModule = module {
     factory { RegisterViewModel(get(), get(), get()) }
     factory { MainViewModel(get()) }
     factory { HomeViewModel(get(), get(), get()) }
-    factory { ProfileViewModel(get(), get()) }
+    factory { ProfileViewModel(get(), get(), get(), get(), get(), get()) }
     factory { EditorViewModel(get(), get(), get()) }
     factory { (viewerParam: ViewerParam) -> ViewerViewModel(viewerParam, get()) }
 }

@@ -69,7 +69,7 @@ class HomeViewModel(
 
     override fun onLoadNextPage() {
         val paginationPerPageLimit = configRepository.getPaginationPerPageLimit()
-        if (state.value.isLoadingNextPage && state.value.posts.size < paginationPerPageLimit)
+        if (state.value.isLoadingNextPage || state.value.posts.size < paginationPerPageLimit)
             return
 
         screenModelScope.launch(dispatchers.io) {
