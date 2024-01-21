@@ -14,7 +14,15 @@ class HomeViewModel(
     BaseViewModel<HomeUIState, HomeUIEffect>(HomeUIState(), dispatchers), HomeInteractionListener {
 
     init {
-        onRefresh()
+        loadLocalPosts()
+        loadPosts()
+    }
+
+    private fun loadLocalPosts() {
+        screenModelScope.launch(dispatchers.io) {
+            val posts = contentRepository.getLocalPosts()
+            updateState { it.copy(posts = posts) }
+        }
     }
 
     private fun loadPosts() {
