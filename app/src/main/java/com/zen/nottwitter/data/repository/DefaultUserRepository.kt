@@ -13,6 +13,7 @@ class DefaultUserRepository(
         try {
             val user = firebaseProvider.authenticate()
             if (user != null) {
+                localStorageProvider.deleteUser()
                 localStorageProvider.saveUser(user)
             }
             return user
@@ -24,6 +25,7 @@ class DefaultUserRepository(
     override suspend fun register(nickname: String, email: String, password: String): User {
         try {
             val user = firebaseProvider.register(nickname, email, password)
+            localStorageProvider.deleteUser()
             localStorageProvider.saveUser(user)
             return user
         } catch (exception: Exception) {
@@ -34,6 +36,7 @@ class DefaultUserRepository(
     override suspend fun login(email: String, password: String): User {
         try {
             val user = firebaseProvider.login(email, password)
+            localStorageProvider.deleteUser()
             localStorageProvider.saveUser(user)
             return user
         } catch (exception: Exception) {

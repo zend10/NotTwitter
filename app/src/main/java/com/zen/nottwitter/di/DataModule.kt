@@ -12,7 +12,7 @@ import org.koin.dsl.module
 val dataModule = module {
     single<UserRepository> { DefaultUserRepository(get(), get()) }
     single<ConfigRepository> { DefaultConfigRepository() }
-    single<ContentRepository> { DefaultContentRepository(get()) }
+    single<ContentRepository> { DefaultContentRepository(get(), get()) }
 
     factory { CreatePostUseCase(get(), get()) }
 }

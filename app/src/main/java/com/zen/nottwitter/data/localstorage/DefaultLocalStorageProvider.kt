@@ -1,7 +1,10 @@
 package com.zen.nottwitter.data.localstorage
 
+import com.zen.nottwitter.data.mapper.PostEntityMapper
 import com.zen.nottwitter.data.mapper.UserEntityMapper
+import com.zen.nottwitter.data.model.Post
 import com.zen.nottwitter.data.model.User
+import com.zen.nottwitter.data.model.entity.PostEntity
 import com.zen.nottwitter.data.model.entity.UserEntity
 import io.realm.kotlin.UpdatePolicy
 import io.realm.kotlin.ext.query
@@ -26,7 +29,26 @@ class DefaultLocalStorageProvider(private val realmClient: RealmClient) : LocalS
     override suspend fun deleteUser() {
         realmClient.realmClient().write {
             val query = this.query<UserEntity>().find()
-            query.firstOrNull()?.let { delete(it) }
+            delete(query)
+        }
+    }
+
+    override suspend fun getPosts(): List<Post> {
+        return realmClient.realmClient().query<PostEntity>().find().map {
+            PostEntityMapper().mapTo(it)
+        }
+    }
+
+    override suspend fun savePosts(posts: List<Post>): List<Post> {
+        return realmClient.realmClient().write {
+            posts.forEach { copyToRealm(PostEntityMapper().mapFrom(it), UpdatePolicy.ALL) }.run { posts }
+        }
+    }
+
+    override suspend fun deletePosts() {
+        realmClient.realmClient().write {
+            val query = this.query<PostEntity>().find()
+            delete(query)
         }
     }
 }
