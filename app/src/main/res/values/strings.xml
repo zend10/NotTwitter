@@ -29,4 +29,5 @@
     <string name="post_dialog_message">This post will be visible to everyone.</string>
     <string name="post_error_dialog_title">Failed to send post</string>
     <string name="ok">OK</string>
+    <string name="just_now">Just now</string>
 </resources>

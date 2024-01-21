@@ -5,6 +5,8 @@ import com.zen.nottwitter.data.model.Post
 import com.zen.nottwitter.data.repository.ContentRepository
 import com.zen.nottwitter.presentation.ui.base.BaseViewModel
 import com.zen.nottwitter.presentation.ui.base.DispatcherProvider
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
@@ -14,8 +16,19 @@ class HomeViewModel(
     BaseViewModel<HomeUIState, HomeUIEffect>(HomeUIState(), dispatchers), HomeInteractionListener {
 
     init {
+        listenToNewPost()
         loadLocalPosts()
         loadPosts()
+    }
+
+    private fun listenToNewPost() {
+        screenModelScope.launch(dispatchers.io) {
+            contentRepository.newPost.collect { newPost ->
+                val posts = ArrayList(state.value.posts)
+                posts.add(0, newPost)
+                updateState { it.copy(posts = posts) }
+            }
+        }
     }
 
     private fun loadLocalPosts() {

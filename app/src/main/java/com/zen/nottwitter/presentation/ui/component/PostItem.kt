@@ -15,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
@@ -39,7 +40,10 @@ fun PostItem(
             Text(text = post.nickname, style = MaterialTheme.typography.titleSmall)
             Spacer(modifier = Modifier.weight(1f))
             Text(
-                text = TimeUtils.getDiff(post.createdOn),
+                text = if (post.createdOn == 0L)
+                    stringResource(id = R.string.just_now)
+                else
+                    TimeUtils.getDiff(post.createdOn),
                 style = MaterialTheme.typography.bodySmall
             )
         }
