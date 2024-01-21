@@ -12,7 +12,9 @@ import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
+import org.koin.core.parameter.ParametersDefinition
 import org.koin.core.parameter.parametersOf
+import org.koin.core.qualifier.Qualifier
 import org.koin.mp.KoinPlatform
 
 @Suppress("BOUNDS_NOT_ALLOWED_IF_BOUNDED_BY_TYPE_PARAMETER")
@@ -41,8 +43,11 @@ abstract class BaseScreen<VM, S, E, I> : Screen where I : BaseInteractionListene
     abstract fun OnRender(state: S, listener: I)
 
     @Composable
-    protected inline fun <reified T : ScreenModel> getViewModel(vararg params: Any): T {
+    protected inline fun <reified T : ScreenModel> getViewModel(
+        qualifier: Qualifier? = null,
+        noinline parameters: ParametersDefinition? = null
+    ): T {
         val koin = KoinPlatform.getKoin()
-        return rememberScreenModel { koin.get { parametersOf(params) } }
+        return rememberScreenModel { koin.get(qualifier, parameters) }
     }
 }

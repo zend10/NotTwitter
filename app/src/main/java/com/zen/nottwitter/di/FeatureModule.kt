@@ -9,6 +9,8 @@ import com.zen.nottwitter.presentation.ui.login.LoginViewModel
 import com.zen.nottwitter.presentation.ui.main.MainViewModel
 import com.zen.nottwitter.presentation.ui.profile.ProfileViewModel
 import com.zen.nottwitter.presentation.ui.register.RegisterViewModel
+import com.zen.nottwitter.presentation.ui.viewer.ViewerParam
+import com.zen.nottwitter.presentation.ui.viewer.ViewerViewModel
 import org.koin.dsl.module
 
 val featureModule = module {
@@ -20,4 +22,5 @@ val featureModule = module {
     factory { HomeViewModel(get()) }
     factory { ProfileViewModel(get(), get()) }
     factory { EditorViewModel(get(), get(), get()) }
+    factory { (viewerParam: ViewerParam) -> ViewerViewModel(viewerParam, get()) }
 }

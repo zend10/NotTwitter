@@ -38,6 +38,8 @@ import com.zen.nottwitter.presentation.ui.component.BackTopBar
 import com.zen.nottwitter.presentation.ui.component.GeneralAlertDialog
 import com.zen.nottwitter.presentation.ui.component.GeneralTextField
 import com.zen.nottwitter.presentation.ui.component.LoadingBarrier
+import com.zen.nottwitter.presentation.ui.viewer.ViewerParam
+import com.zen.nottwitter.presentation.ui.viewer.ViewerScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 class EditorScreen :
@@ -51,7 +53,7 @@ class EditorScreen :
     override fun onEffect(effect: EditorUIEffect, navigator: Navigator) {
         when (effect) {
             EditorUIEffect.NavigateBack -> navigator.pop()
-            is EditorUIEffect.ViewImage -> {}
+            is EditorUIEffect.ViewImage -> navigator.push(ViewerScreen(effect.imageUriString))
             EditorUIEffect.CreatePostSuccess -> navigator.pop()
         }
     }
