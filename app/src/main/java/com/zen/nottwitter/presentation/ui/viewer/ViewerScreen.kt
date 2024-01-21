@@ -3,6 +3,7 @@ package com.zen.nottwitter.presentation.ui.viewer
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
@@ -44,7 +45,8 @@ data class ViewerScreen(private val imageLink: String) :
             ) {
                 AsyncImage(
                     model = state.imageLink,
-                    contentDescription = null
+                    contentDescription = null,
+                    modifier = Modifier.fillMaxWidth()
                 )
             }
         }
