@@ -2,18 +2,17 @@ package com.zen.nottwitter.presentation.ui.home
 
 import cafe.adriel.voyager.core.model.screenModelScope
 import com.zen.nottwitter.data.model.Post
+import com.zen.nottwitter.data.repository.ConfigRepository
 import com.zen.nottwitter.data.repository.ContentRepository
 import com.zen.nottwitter.presentation.ui.base.BaseViewModel
 import com.zen.nottwitter.presentation.ui.base.DispatcherProvider
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
     private val contentRepository: ContentRepository,
+    private val configRepository: ConfigRepository,
     dispatchers: DispatcherProvider
-) :
-    BaseViewModel<HomeUIState, HomeUIEffect>(HomeUIState(), dispatchers), HomeInteractionListener {
+) : BaseViewModel<HomeUIState, HomeUIEffect>(HomeUIState(), dispatchers), HomeInteractionListener {
 
     init {
         listenToNewPost()
@@ -66,5 +65,24 @@ class HomeViewModel(
 
     override fun onRefresh() {
         loadPosts()
+    }
+
+    override fun onLoadNextPage() {
+        val paginationPerPageLimit = configRepository.getPaginationPerPageLimit()
+        if (state.value.isLoadingNextPage && state.value.posts.size < paginationPerPageLimit)
+            return
+
+        screenModelScope.launch(dispatchers.io) {
+            try {
+                updateState { it.copy(isLoadingNextPage = true) }
+                val posts = contentRepository.getPosts(true)
+                val newPosts = ArrayList(state.value.posts + posts)
+                updateState { it.copy(posts = newPosts) }
+            } catch (exception: Exception) {
+                // do nothing
+            } finally {
+                updateState { it.copy(isLoadingNextPage = false) }
+            }
+        }
     }
 }

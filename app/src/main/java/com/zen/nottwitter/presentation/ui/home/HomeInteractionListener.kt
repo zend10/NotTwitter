@@ -8,4 +8,5 @@ interface HomeInteractionListener : BaseInteractionListener {
     fun onPostClick(post: Post)
     fun onPostImageClick(imageUrl: String)
     fun onRefresh()
+    fun onLoadNextPage()
 }

@@ -23,4 +23,8 @@ class DefaultConfigRepository : ConfigRepository {
             messageMaxLength = 280
         )
     }
+
+    override fun getPaginationPerPageLimit(): Int {
+        return 25
+    }
 }

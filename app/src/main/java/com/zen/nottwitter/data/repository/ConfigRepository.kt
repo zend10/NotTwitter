@@ -7,4 +7,5 @@ interface ConfigRepository {
     fun getUserConfig(): UserConfig
     fun getFallbackErrorMessage(): String
     fun getPostConfig(): PostConfig
+    fun getPaginationPerPageLimit(): Int
 }

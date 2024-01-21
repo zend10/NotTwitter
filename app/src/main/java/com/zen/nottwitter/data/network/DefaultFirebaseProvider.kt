@@ -3,6 +3,7 @@ package com.zen.nottwitter.data.network
 import android.content.Context
 import android.net.Uri
 import com.google.firebase.Timestamp
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.Query
 import com.zen.nottwitter.data.exception.LoginFailedException
@@ -18,6 +19,8 @@ class DefaultFirebaseProvider(
     private val context: Context,
     private val firebaseClient: FirebaseClient
 ) : FirebaseProvider {
+
+    private var lastVisiblePost: DocumentSnapshot? = null
 
     override suspend fun authenticate(): User? {
         try {
@@ -122,13 +125,28 @@ class DefaultFirebaseProvider(
         }
     }
 
-    override suspend fun getPosts(): List<Post> {
+    override suspend fun getPosts(loadNextPage: Boolean): List<Post> {
         try {
-            val storedPosts = firebaseClient.firestoreClient().collection(DB_POSTS)
-                .orderBy(KEY_CREATED_ON, Query.Direction.DESCENDING)
-                .limit(25)
-                .get()
-                .await()
+            val storedPosts = if (loadNextPage) {
+                if (lastVisiblePost == null)
+                    return listOf()
+
+                firebaseClient.firestoreClient().collection(DB_POSTS)
+                    .orderBy(KEY_CREATED_ON, Query.Direction.DESCENDING)
+                    .startAfter(lastVisiblePost?.get(KEY_CREATED_ON))
+                    .limit(25)
+                    .get()
+                    .await()
+            } else {
+                firebaseClient.firestoreClient().collection(DB_POSTS)
+                    .orderBy(KEY_CREATED_ON, Query.Direction.DESCENDING)
+                    .limit(25)
+                    .get()
+                    .await()
+            }
+
+            lastVisiblePost = storedPosts?.documents?.lastOrNull()
+
             val posts = storedPosts?.documents?.mapNotNull {
                 Post(
                     uid = it.id,

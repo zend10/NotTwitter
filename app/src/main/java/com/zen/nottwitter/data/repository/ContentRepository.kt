@@ -7,6 +7,6 @@ import kotlinx.coroutines.flow.Flow
 interface ContentRepository {
     val newPost: Flow<Post>
     suspend fun createPost(user: User, message: String, imageUriString: String): Post
-    suspend fun getPosts(): List<Post>
+    suspend fun getPosts(loadNextPage: Boolean = false): List<Post>
     suspend fun getLocalPosts(): List<Post>
 }
