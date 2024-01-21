@@ -6,13 +6,13 @@ import com.google.firebase.Timestamp
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.QuerySnapshot
 import com.zen.nottwitter.data.exception.LoginFailedException
 import com.zen.nottwitter.data.exception.PostFailedException
 import com.zen.nottwitter.data.exception.RegisterFailedException
 import com.zen.nottwitter.data.model.Post
 import com.zen.nottwitter.data.model.User
 import kotlinx.coroutines.tasks.await
-import java.io.File
 import java.util.UUID
 
 class DefaultFirebaseProvider(
@@ -21,6 +21,7 @@ class DefaultFirebaseProvider(
 ) : FirebaseProvider {
 
     private var lastVisiblePost: DocumentSnapshot? = null
+    private var lastVisibleUserPost: DocumentSnapshot? = null
 
     override suspend fun authenticate(): User? {
         try {
@@ -147,17 +148,7 @@ class DefaultFirebaseProvider(
 
             lastVisiblePost = storedPosts?.documents?.lastOrNull()
 
-            val posts = storedPosts?.documents?.mapNotNull {
-                Post(
-                    uid = it.id,
-                    userUid = it.data?.get(KEY_USER_UID) as? String ?: "",
-                    nickname = it.data?.get(KEY_NICKNAME) as? String ?: "",
-                    message = it.data?.get(KEY_MESSAGE) as? String ?: "",
-                    imageUrl = it.data?.get(KEY_IMAGE_URL) as? String ?: "",
-                    createdOn = (it.data?.get(KEY_CREATED_ON) as? Timestamp)?.seconds ?: 0L,
-                )
-            } ?: listOf()
-            return posts
+            return mapStoredPostsToPosts(storedPosts)
         } catch (exception: Exception) {
             throw exception
         }
@@ -167,8 +158,47 @@ class DefaultFirebaseProvider(
 
     }
 
-    override suspend fun getUserPosts() {
+    override suspend fun getUserPosts(user: User, loadNextPage: Boolean): List<Post> {
+        try {
+            val storedPosts = if (loadNextPage) {
+                if (lastVisiblePost == null)
+                    return listOf()
 
+                firebaseClient.firestoreClient().collection(DB_POSTS)
+                    .orderBy(KEY_CREATED_ON, Query.Direction.DESCENDING)
+                    .whereEqualTo(KEY_USER_UID, user.uid)
+                    .startAfter(lastVisiblePost?.get(KEY_CREATED_ON))
+                    .limit(25)
+                    .get()
+                    .await()
+            } else {
+                firebaseClient.firestoreClient().collection(DB_POSTS)
+                    .orderBy(KEY_CREATED_ON, Query.Direction.DESCENDING)
+                    .whereEqualTo(KEY_USER_UID, user.uid)
+                    .limit(25)
+                    .get()
+                    .await()
+            }
+
+            lastVisibleUserPost = storedPosts?.documents?.lastOrNull()
+
+            return mapStoredPostsToPosts(storedPosts)
+        } catch (exception: Exception) {
+            throw exception
+        }
+    }
+
+    private fun mapStoredPostsToPosts(storePosts: QuerySnapshot?): List<Post> {
+        return storePosts?.documents?.mapNotNull {
+            Post(
+                uid = it.id,
+                userUid = it.data?.get(KEY_USER_UID) as? String ?: "",
+                nickname = it.data?.get(KEY_NICKNAME) as? String ?: "",
+                message = it.data?.get(KEY_MESSAGE) as? String ?: "",
+                imageUrl = it.data?.get(KEY_IMAGE_URL) as? String ?: "",
+                createdOn = (it.data?.get(KEY_CREATED_ON) as? Timestamp)?.seconds ?: 0L,
+            )
+        } ?: listOf()
     }
 
     companion object {

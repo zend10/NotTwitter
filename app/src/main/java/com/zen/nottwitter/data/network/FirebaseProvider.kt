@@ -11,5 +11,5 @@ interface FirebaseProvider {
     suspend fun createPost(user: User, message: String, imageUriString: String): Post
     suspend fun getPosts(loadNextPage: Boolean = false): List<Post>
     suspend fun getPost()
-    suspend fun getUserPosts()
+    suspend fun getUserPosts(user: User, loadNextPage: Boolean = false): List<Post>
 }

@@ -10,4 +10,7 @@ interface LocalStorageProvider {
     suspend fun getPosts(): List<Post>
     suspend fun savePosts(posts: List<Post>): List<Post>
     suspend fun deletePosts()
+    suspend fun getUserPosts(): List<Post>
+    suspend fun saveUserPosts(posts: List<Post>): List<Post>
+    suspend fun deleteUserPosts()
 }
