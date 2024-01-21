@@ -13,4 +13,12 @@ class DefaultContentRepository(private val firebaseProvider: FirebaseProvider) :
             throw exception
         }
     }
+
+    override suspend fun getPosts(): List<Post> {
+        try {
+            return firebaseProvider.getPosts()
+        } catch (exception: Exception) {
+            throw exception
+        }
+    }
 }

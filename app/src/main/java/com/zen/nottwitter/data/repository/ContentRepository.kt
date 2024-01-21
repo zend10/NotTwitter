@@ -5,4 +5,5 @@ import com.zen.nottwitter.data.model.User
 
 interface ContentRepository {
     suspend fun createPost(user: User, message: String, imageUriString: String): Post
+    suspend fun getPosts(): List<Post>
 }

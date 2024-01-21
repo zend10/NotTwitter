@@ -2,7 +2,9 @@ package com.zen.nottwitter.data.network
 
 import android.content.Context
 import android.net.Uri
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.Query
 import com.zen.nottwitter.data.exception.LoginFailedException
 import com.zen.nottwitter.data.exception.PostFailedException
 import com.zen.nottwitter.data.exception.RegisterFailedException
@@ -120,8 +122,27 @@ class DefaultFirebaseProvider(
         }
     }
 
-    override suspend fun getPosts() {
-
+    override suspend fun getPosts(): List<Post> {
+        try {
+            val storedPosts = firebaseClient.firestoreClient().collection(DB_POSTS)
+                .orderBy(KEY_CREATED_ON, Query.Direction.DESCENDING)
+                .limit(25)
+                .get()
+                .await()
+            val posts = storedPosts?.documents?.mapNotNull {
+                Post(
+                    uid = it.id,
+                    userUid = it.data?.get(KEY_USER_UID) as? String ?: "",
+                    nickname = it.data?.get(KEY_NICKNAME) as? String ?: "",
+                    message = it.data?.get(KEY_MESSAGE) as? String ?: "",
+                    imageUrl = it.data?.get(KEY_IMAGE_URL) as? String ?: "",
+                    createdOn = (it.data?.get(KEY_CREATED_ON) as? Timestamp)?.seconds ?: 0L,
+                )
+            } ?: listOf()
+            return posts
+        } catch (exception: Exception) {
+            throw exception
+        }
     }
 
     override suspend fun getPost() {

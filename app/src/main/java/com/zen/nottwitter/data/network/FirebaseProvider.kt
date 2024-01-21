@@ -9,7 +9,7 @@ interface FirebaseProvider {
     suspend fun login(email: String, password: String): User
     suspend fun logout()
     suspend fun createPost(user: User, message: String, imageUriString: String): Post
-    suspend fun getPosts()
+    suspend fun getPosts(): List<Post>
     suspend fun getPost()
     suspend fun getUserPosts()
 }
