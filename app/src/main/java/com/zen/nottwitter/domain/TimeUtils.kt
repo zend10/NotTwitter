@@ -18,7 +18,9 @@ object TimeUtils {
         val then = Instant.fromEpochSeconds(seconds)
         val now = Clock.System.now()
         val diff = then.until(now, DateTimeUnit.MINUTE, timeZone)
-        return if (diff < 60)
+        return if (diff <= 0) {
+            "0m"
+        } else if (diff < 60)
             "${diff}m"
         else if (diff < 60 * 24) {
             "${diff / 60}h"
