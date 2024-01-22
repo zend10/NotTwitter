@@ -9,6 +9,7 @@ import com.zen.nottwitter.domain.usecase.GetUserPostsRequest
 import com.zen.nottwitter.domain.usecase.GetUserPostsUserCase
 import com.zen.nottwitter.presentation.ui.base.BaseViewModel
 import com.zen.nottwitter.presentation.ui.base.DispatcherProvider
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class ProfileViewModel(
@@ -23,10 +24,18 @@ class ProfileViewModel(
     ProfileInteractionListener {
 
     init {
-        loadUser()
+        listenToUser()
         listenToNewPost()
-        loadLocalPosts()
-        loadPosts()
+    }
+
+    private fun listenToUser() {
+        screenModelScope.launch(dispatchers.io) {
+            userRepository.user.collect { user ->
+                updateState { it.copy(nickname = user.nickname) }
+                loadLocalPosts()
+                loadPosts()
+            }
+        }
     }
 
     private fun listenToNewPost() {
@@ -56,17 +65,6 @@ class ProfileViewModel(
                 // do nothing
             } finally {
                 updateState { it.copy(isLoading = false) }
-            }
-        }
-    }
-
-    private fun loadUser() {
-        screenModelScope.launch(dispatchers.io) {
-            try {
-                val user = userRepository.getUser()
-                updateState { it.copy(nickname = user.nickname) }
-            } catch (_: NoSuchElementException) {
-                // do nothing
             }
         }
     }

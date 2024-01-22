@@ -5,11 +5,16 @@ import com.zen.nottwitter.data.model.User
 import com.zen.nottwitter.data.network.FirebaseProvider
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 
 class DefaultUserRepository(
     private val firebaseProvider: FirebaseProvider,
     private val localStorageProvider: LocalStorageProvider
 ) : UserRepository {
+
+    private val _user = MutableStateFlow(User())
+    override val user: Flow<User>
+        get() = _user
 
     private val _logoutTrigger = MutableSharedFlow<Unit>()
     override val logoutTrigger: Flow<Unit>
@@ -21,6 +26,7 @@ class DefaultUserRepository(
             if (user != null) {
                 localStorageProvider.deleteUser()
                 localStorageProvider.saveUser(user)
+                _user.emit(user)
             }
             return user
         } catch (exception: Exception) {
@@ -33,6 +39,7 @@ class DefaultUserRepository(
             val user = firebaseProvider.register(nickname, email, password)
             localStorageProvider.deleteUser()
             localStorageProvider.saveUser(user)
+            _user.emit(user)
             return user
         } catch (exception: Exception) {
             throw exception
@@ -44,6 +51,7 @@ class DefaultUserRepository(
             val user = firebaseProvider.login(email, password)
             localStorageProvider.deleteUser()
             localStorageProvider.saveUser(user)
+            _user.emit(user)
             return user
         } catch (exception: Exception) {
             throw exception
@@ -52,6 +60,7 @@ class DefaultUserRepository(
 
     override suspend fun logout() {
         localStorageProvider.deleteUser()
+        localStorageProvider.deleteUserPosts()
         firebaseProvider.logout()
         _logoutTrigger.emit(Unit)
     }

@@ -4,6 +4,7 @@ import cafe.adriel.voyager.core.model.screenModelScope
 import com.zen.nottwitter.data.model.Post
 import com.zen.nottwitter.data.repository.ConfigRepository
 import com.zen.nottwitter.data.repository.ContentRepository
+import com.zen.nottwitter.data.repository.UserRepository
 import com.zen.nottwitter.presentation.ui.base.BaseViewModel
 import com.zen.nottwitter.presentation.ui.base.DispatcherProvider
 import kotlinx.coroutines.launch
@@ -11,13 +12,22 @@ import kotlinx.coroutines.launch
 class HomeViewModel(
     private val contentRepository: ContentRepository,
     private val configRepository: ConfigRepository,
+    private val userRepository: UserRepository,
     dispatchers: DispatcherProvider
 ) : BaseViewModel<HomeUIState, HomeUIEffect>(HomeUIState(), dispatchers), HomeInteractionListener {
 
     init {
+        listenToUser()
         listenToNewPost()
-        loadLocalPosts()
-        loadPosts()
+    }
+
+    private fun listenToUser() {
+        screenModelScope.launch(dispatchers.io) {
+            userRepository.user.collect {
+                loadLocalPosts()
+                loadPosts()
+            }
+        }
     }
 
     private fun listenToNewPost() {

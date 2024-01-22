@@ -45,9 +45,11 @@ class MainScreen : BaseScreen<MainViewModel, MainUIState, MainUIEffect, MainInte
                     BottomBar(tabs = tabs, tabNavigator = tabNavigator)
                 }
             ) { paddingValues ->
-                Box(modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues)
+                ) {
                     CurrentTab()
                 }
             }

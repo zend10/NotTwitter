@@ -36,7 +36,6 @@ import com.zen.nottwitter.presentation.ui.component.ActionTopBar
 import com.zen.nottwitter.presentation.ui.component.EmptyScreen
 import com.zen.nottwitter.presentation.ui.component.GeneralAlertDialog
 import com.zen.nottwitter.presentation.ui.component.PostItem
-import com.zen.nottwitter.presentation.ui.landing.LandingScreen
 import com.zen.nottwitter.presentation.ui.viewer.ViewerScreen
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)

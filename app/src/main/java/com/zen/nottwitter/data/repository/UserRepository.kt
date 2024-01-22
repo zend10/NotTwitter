@@ -4,6 +4,7 @@ import com.zen.nottwitter.data.model.User
 import kotlinx.coroutines.flow.Flow
 
 interface UserRepository {
+    val user: Flow<User>
     val logoutTrigger: Flow<Unit>
 
     suspend fun authenticate(): User?
