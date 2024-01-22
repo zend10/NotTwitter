@@ -9,7 +9,6 @@ import com.zen.nottwitter.domain.usecase.GetUserPostsRequest
 import com.zen.nottwitter.domain.usecase.GetUserPostsUserCase
 import com.zen.nottwitter.presentation.ui.base.BaseViewModel
 import com.zen.nottwitter.presentation.ui.base.DispatcherProvider
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class ProfileViewModel(

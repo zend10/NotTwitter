@@ -13,12 +13,12 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.core.parameter.ParametersDefinition
-import org.koin.core.parameter.parametersOf
 import org.koin.core.qualifier.Qualifier
 import org.koin.mp.KoinPlatform
 
 @Suppress("BOUNDS_NOT_ALLOWED_IF_BOUNDED_BY_TYPE_PARAMETER")
-abstract class BaseScreen<VM, S, E, I> : Screen where I : BaseInteractionListener, VM : BaseViewModel<S, E>, VM : I {
+abstract class BaseScreen<VM, S, E, I> :
+    Screen where I : BaseInteractionListener, VM : BaseViewModel<S, E>, VM : I {
 
     @Composable
     protected fun Init(viewModel: VM) {

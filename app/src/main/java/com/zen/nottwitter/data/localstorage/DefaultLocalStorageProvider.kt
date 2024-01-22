@@ -43,7 +43,8 @@ class DefaultLocalStorageProvider(private val realmClient: RealmClient) : LocalS
 
     override suspend fun savePosts(posts: List<Post>): List<Post> {
         return realmClient.realmClient().write {
-            posts.forEach { copyToRealm(PostEntityMapper().mapFrom(it), UpdatePolicy.ALL) }.run { posts }
+            posts.forEach { copyToRealm(PostEntityMapper().mapFrom(it), UpdatePolicy.ALL) }
+                .run { posts }
         }
     }
 
@@ -62,7 +63,8 @@ class DefaultLocalStorageProvider(private val realmClient: RealmClient) : LocalS
 
     override suspend fun saveUserPosts(posts: List<Post>): List<Post> {
         return realmClient.realmClient().write {
-            posts.forEach { copyToRealm(UserPostEntityMapper().mapFrom(it), UpdatePolicy.ALL) }.run { posts }
+            posts.forEach { copyToRealm(UserPostEntityMapper().mapFrom(it), UpdatePolicy.ALL) }
+                .run { posts }
         }
     }
 

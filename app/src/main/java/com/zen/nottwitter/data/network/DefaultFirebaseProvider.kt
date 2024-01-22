@@ -154,10 +154,6 @@ class DefaultFirebaseProvider(
         }
     }
 
-    override suspend fun getPost() {
-
-    }
-
     override suspend fun getUserPosts(user: User, loadNextPage: Boolean): List<Post> {
         try {
             val storedPosts = if (loadNextPage) {

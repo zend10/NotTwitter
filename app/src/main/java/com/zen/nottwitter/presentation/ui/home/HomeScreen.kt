@@ -14,7 +14,6 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
-import androidx.compose.material.pullrefresh.PullRefreshState
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.CircularProgressIndicator
@@ -135,7 +134,6 @@ class HomeScreen : BaseScreen<HomeViewModel, HomeUIState, HomeUIEffect, HomeInte
                 PostItem(
                     post = it,
                     onImageClick = listener::onPostImageClick,
-                    onPostClick = listener::onPostClick
                 )
             }
             item(state.isLoadingNextPage) {
@@ -158,10 +156,6 @@ class HomeScreen : BaseScreen<HomeViewModel, HomeUIState, HomeUIEffect, HomeInte
     private fun HomeScreenPreview() {
         OnRender(state = HomeUIState(), listener = object : HomeInteractionListener {
             override fun onNewPostClick() {
-                TODO("Not yet implemented")
-            }
-
-            override fun onPostClick(post: Post) {
                 TODO("Not yet implemented")
             }
 

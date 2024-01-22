@@ -65,10 +65,6 @@ class HomeViewModel(
         sendNewEffect(HomeUIEffect.NavigateToPostEditor)
     }
 
-    override fun onPostClick(post: Post) {
-        sendNewEffect(HomeUIEffect.ViewPost(post.uid))
-    }
-
     override fun onPostImageClick(imageUrl: String) {
         sendNewEffect(HomeUIEffect.ViewImage(imageUrl))
     }
