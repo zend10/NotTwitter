@@ -18,6 +18,8 @@ import cafe.adriel.voyager.navigator.tab.CurrentTab
 import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
 import cafe.adriel.voyager.navigator.tab.TabNavigator
 import com.zen.nottwitter.presentation.ui.base.BaseScreen
+import com.zen.nottwitter.presentation.ui.component.LoadingBarrier
+import com.zen.nottwitter.presentation.ui.landing.LandingScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 class MainScreen : BaseScreen<MainViewModel, MainUIState, MainUIEffect, MainInteractionListener>() {
@@ -29,7 +31,7 @@ class MainScreen : BaseScreen<MainViewModel, MainUIState, MainUIEffect, MainInte
 
     override fun onEffect(effect: MainUIEffect, navigator: Navigator) {
         when (effect) {
-            MainUIEffect.Logout -> {}
+            MainUIEffect.Logout -> navigator.replaceAll(LandingScreen())
         }
     }
 
@@ -49,6 +51,10 @@ class MainScreen : BaseScreen<MainViewModel, MainUIState, MainUIEffect, MainInte
                     CurrentTab()
                 }
             }
+        }
+
+        if (state.isLoading) {
+            LoadingBarrier()
         }
     }
 

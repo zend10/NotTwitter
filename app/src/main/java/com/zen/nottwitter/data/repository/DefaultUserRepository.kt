@@ -3,11 +3,17 @@ package com.zen.nottwitter.data.repository
 import com.zen.nottwitter.data.localstorage.LocalStorageProvider
 import com.zen.nottwitter.data.model.User
 import com.zen.nottwitter.data.network.FirebaseProvider
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 
 class DefaultUserRepository(
     private val firebaseProvider: FirebaseProvider,
     private val localStorageProvider: LocalStorageProvider
 ) : UserRepository {
+
+    private val _logoutTrigger = MutableSharedFlow<Unit>()
+    override val logoutTrigger: Flow<Unit>
+        get() = _logoutTrigger
 
     override suspend fun authenticate(): User? {
         try {
@@ -47,6 +53,7 @@ class DefaultUserRepository(
     override suspend fun logout() {
         localStorageProvider.deleteUser()
         firebaseProvider.logout()
+        _logoutTrigger.emit(Unit)
     }
 
     override suspend fun getUser(): User {

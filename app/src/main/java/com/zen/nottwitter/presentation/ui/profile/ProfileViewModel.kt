@@ -109,7 +109,6 @@ class ProfileViewModel(
     override fun onLogoutDialogPositiveCtaClick() {
         screenModelScope.launch(dispatchers.io) {
             userRepository.logout()
-            sendNewEffect(ProfileUIEffect.Logout)
         }
     }
 }

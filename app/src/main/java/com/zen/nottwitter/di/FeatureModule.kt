@@ -18,7 +18,7 @@ val featureModule = module {
     factory { LandingViewModel(get(), get()) }
     factory { LoginViewModel(get(), get(), get()) }
     factory { RegisterViewModel(get(), get(), get()) }
-    factory { MainViewModel(get()) }
+    factory { MainViewModel(get(), get()) }
     factory { HomeViewModel(get(), get(), get()) }
     factory { ProfileViewModel(get(), get(), get(), get(), get(), get()) }
     factory { EditorViewModel(get(), get(), get()) }

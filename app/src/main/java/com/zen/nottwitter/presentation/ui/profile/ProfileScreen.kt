@@ -50,7 +50,6 @@ class ProfileScreen :
 
     override fun onEffect(effect: ProfileUIEffect, navigator: Navigator) {
         when (effect) {
-            is ProfileUIEffect.Logout -> navigator.parent?.parent?.replaceAll(LandingScreen())
             is ProfileUIEffect.ViewImage -> navigator.push(ViewerScreen(effect.imageUrl))
         }
     }
