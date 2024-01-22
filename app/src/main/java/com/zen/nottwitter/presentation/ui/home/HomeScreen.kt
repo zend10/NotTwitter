@@ -8,6 +8,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Create
@@ -86,16 +88,31 @@ class HomeScreen : BaseScreen<HomeViewModel, HomeUIState, HomeUIEffect, HomeInte
                 )
             }
         ) { paddingValues ->
-            if (state.posts.isEmpty()) {
-                EmptyScreen(modifier = Modifier.padding(paddingValues))
-            } else {
-                PostList(
-                    lazyListState,
-                    pullRefreshState,
-                    shouldStartPaginate,
-                    state,
-                    listener,
-                    modifier = Modifier.padding(paddingValues)
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+                    .pullRefresh(pullRefreshState)
+            ) {
+                if (state.posts.isEmpty()) {
+                    EmptyScreen(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .verticalScroll(rememberScrollState())
+                    )
+                } else {
+                    PostList(
+                        lazyListState,
+                        shouldStartPaginate,
+                        state,
+                        listener,
+                        modifier = Modifier.padding(paddingValues)
+                    )
+                }
+                PullRefreshIndicator(
+                    refreshing = state.isLoading,
+                    state = pullRefreshState,
+                    modifier = Modifier.align(Alignment.TopCenter)
                 )
             }
         }
@@ -104,7 +121,6 @@ class HomeScreen : BaseScreen<HomeViewModel, HomeUIState, HomeUIEffect, HomeInte
     @Composable
     private fun PostList(
         lazyListState: LazyListState,
-        pullRefreshState: PullRefreshState,
         shouldStartPaginate: State<Boolean>,
         state: HomeUIState,
         listener: HomeInteractionListener,
@@ -114,35 +130,23 @@ class HomeScreen : BaseScreen<HomeViewModel, HomeUIState, HomeUIEffect, HomeInte
             if (shouldStartPaginate.value) listener.onLoadNextPage()
         }
 
-        Box(
-            modifier = modifier
-                .fillMaxSize()
-                .pullRefresh(pullRefreshState)
-        ) {
-            PullRefreshIndicator(
-                refreshing = state.isLoading,
-                state = pullRefreshState,
-                modifier = Modifier.align(Alignment.TopCenter)
-            )
-
-            LazyColumn(state = lazyListState) {
-                items(state.posts) {
-                    PostItem(
-                        post = it,
-                        onImageClick = listener::onPostImageClick,
-                        onPostClick = listener::onPostClick
-                    )
-                }
-                item(state.isLoadingNextPage) {
-                    if (state.isLoadingNextPage) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            CircularProgressIndicator()
-                        }
+        LazyColumn(state = lazyListState) {
+            items(state.posts) {
+                PostItem(
+                    post = it,
+                    onImageClick = listener::onPostImageClick,
+                    onPostClick = listener::onPostClick
+                )
+            }
+            item(state.isLoadingNextPage) {
+                if (state.isLoadingNextPage) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
                     }
                 }
             }
