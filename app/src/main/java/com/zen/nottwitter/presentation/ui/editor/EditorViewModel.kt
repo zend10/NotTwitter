@@ -69,7 +69,6 @@ class EditorViewModel(
     override fun onPostDialogPositiveCtaClick() {
         screenModelScope.launch(dispatchers.io) {
             try {
-                updateState { it.copy(isLoading = true) }
                 createPostUseCase.execute(
                     CreatePostRequest(
                         state.value.message.trim(),
@@ -84,8 +83,6 @@ class EditorViewModel(
                         errorMessage = exception.localizedMessage ?: fallbackErrorMessage
                     )
                 }
-            } finally {
-                updateState { it.copy(isLoading = false) }
             }
         }
     }

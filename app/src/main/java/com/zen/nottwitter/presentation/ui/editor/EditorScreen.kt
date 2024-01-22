@@ -37,8 +37,6 @@ import com.zen.nottwitter.presentation.ui.base.BaseScreen
 import com.zen.nottwitter.presentation.ui.component.BackTopBar
 import com.zen.nottwitter.presentation.ui.component.GeneralAlertDialog
 import com.zen.nottwitter.presentation.ui.component.GeneralTextField
-import com.zen.nottwitter.presentation.ui.component.LoadingBarrier
-import com.zen.nottwitter.presentation.ui.viewer.ViewerParam
 import com.zen.nottwitter.presentation.ui.viewer.ViewerScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -73,7 +71,10 @@ class EditorScreen :
                     onBackButtonPressed = listener::onBackButtonClick,
                     actionItem = {
                         TextButton(
-                            onClick = listener::onPostClick,
+                            onClick = {
+                                focusManager.clearFocus()
+                                listener.onPostClick()
+                            },
                             enabled = state.isPostButtonEnable
                         ) {
                             Text(text = stringResource(id = R.string.post))
@@ -104,11 +105,6 @@ class EditorScreen :
                 )
                 UtilityBar(state, listener)
             }
-        }
-
-        if (state.isLoading) {
-            focusManager.clearFocus()
-            LoadingBarrier()
         }
 
         if (state.showImagePicker) {

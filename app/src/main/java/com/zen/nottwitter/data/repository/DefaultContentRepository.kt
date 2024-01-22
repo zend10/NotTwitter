@@ -6,6 +6,7 @@ import com.zen.nottwitter.data.model.User
 import com.zen.nottwitter.data.network.FirebaseProvider
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 
 class DefaultContentRepository(
     private val firebaseProvider: FirebaseProvider,
@@ -16,13 +17,20 @@ class DefaultContentRepository(
     override val newPost: Flow<Post>
         get() = _newPost
 
+    private val _sendingPost = MutableStateFlow(false)
+    override val sendingPost: Flow<Boolean>
+        get() = _sendingPost
+
     override suspend fun createPost(user: User, message: String, imageUriString: String): Post {
         try {
+            _sendingPost.emit(true)
             val post = firebaseProvider.createPost(user, message, imageUriString)
             _newPost.emit(post)
             return post
         } catch (exception: Exception) {
             throw exception
+        } finally {
+            _sendingPost.emit(false)
         }
     }
 
