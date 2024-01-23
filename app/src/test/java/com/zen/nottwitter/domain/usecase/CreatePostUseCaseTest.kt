@@ -30,7 +30,6 @@ class CreatePostUseCaseTest : BaseTest() {
 
     @Test
     fun `CreatePostUseCase positive flow will return Post`() = runTest {
-        val stubTestMessage = "Hello"
         coEvery { userRepository.getUser() } returns stubTestUser
         coEvery {
             contentRepository.createPost(
@@ -51,7 +50,6 @@ class CreatePostUseCaseTest : BaseTest() {
 
     @Test
     fun `CreatePostUseCase negative flow will throw Exception`() {
-        val stubTestMessage = "Hello"
         coEvery { userRepository.getUser() } returns stubTestUser
         coEvery {
             contentRepository.createPost(

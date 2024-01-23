@@ -37,6 +37,7 @@ abstract class BaseTest {
     protected val stubTestPosts = listOf(Post("123"), Post("456"), Post("789"))
     protected val stubTestPost = Post("wow")
 
+    protected val stubTestMessage = "Hello"
     protected val stubTestImageUrl = "https://coolimage.jpg"
 
     @Before

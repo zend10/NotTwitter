@@ -56,7 +56,7 @@ class EditorViewModelTest : BaseTest() {
     @Test
     fun `onBackButtonClick with message or imageUriString will update showBackDialog state`() {
         // with message
-        viewModel.onMessageChange("Hello")
+        viewModel.onMessageChange(stubTestMessage)
         viewModel.onBackButtonClick()
         assertEquals(true, state.value.showBackDialog)
         viewModel.onBackDialogDismiss()
@@ -79,8 +79,8 @@ class EditorViewModelTest : BaseTest() {
 
     @Test
     fun `onMessageChange will update state for message, characterLimit, isOverCharacterLimit, isPostButtonEnable`() {
-        viewModel.onMessageChange("Hello")
-        assertEquals("Hello", state.value.message)
+        viewModel.onMessageChange(stubTestMessage)
+        assertEquals(stubTestMessage, state.value.message)
         assertEquals("5 / 280", state.value.characterLimit)
         assertEquals(false, state.value.isOverCharacterLimit)
         assertEquals(true, state.value.isPostButtonEnable)
@@ -121,7 +121,7 @@ class EditorViewModelTest : BaseTest() {
 
     @Test
     fun `onBackDialogDismiss will update showBackDialog state to false`() {
-        viewModel.onMessageChange("Hello")
+        viewModel.onMessageChange(stubTestMessage)
         viewModel.onBackButtonClick()
         assertEquals(true, state.value.showBackDialog)
         viewModel.onBackDialogDismiss()
@@ -147,7 +147,6 @@ class EditorViewModelTest : BaseTest() {
     @Test
     fun `onPostDialogPositiveCtaClick positive flow will emit CreatePostSuccess effect`() =
         runTest {
-            val stubTestMessage = "Hello"
             coEvery {
                 createPostUseCase.execute(
                     CreatePostRequest(
@@ -175,7 +174,6 @@ class EditorViewModelTest : BaseTest() {
 
     @Test
     fun `onPostDialogPositiveCtaClick negative flow will update errorMessage state`() {
-        val stubTestMessage = "Hello"
         val stubTestException = spyk<Exception>()
         val stubTestErrorMessage = "Oops"
         coEvery {
@@ -210,7 +208,6 @@ class EditorViewModelTest : BaseTest() {
 
     @Test
     fun `onPostErrorDialogDismiss will update errorMessage state to empty string`() {
-        val stubTestMessage = "Hello"
         val stubTestException = spyk<Exception>()
         val stubTestErrorMessage = "Oops"
         coEvery {
