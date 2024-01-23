@@ -1,28 +1,24 @@
 package com.zen.nottwitter.presentation.ui.login
 
 import app.cash.turbine.test
+import com.zen.nottwitter.core.BaseTest
 import com.zen.nottwitter.data.repository.ConfigRepository
 import com.zen.nottwitter.data.repository.UserRepository
-import com.zen.nottwitter.core.BaseTest
-import com.zen.nottwitter.core.MainCoroutineRule
-import com.zen.nottwitter.core.TestDispatchers
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.spyk
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class LoginViewModelTest : BaseTest() {
 
-    private val testDispatchers: TestDispatchers = TestDispatchers()
     private lateinit var viewModel: LoginViewModel
     private lateinit var state: StateFlow<LoginUIState>
 
@@ -31,9 +27,6 @@ class LoginViewModelTest : BaseTest() {
 
     @MockK
     private lateinit var configRepository: ConfigRepository
-
-    @get:Rule
-    val mainCoroutineRule = MainCoroutineRule(testDispatchers.testDispatcher)
 
     @Before
     override fun setUp() {
@@ -100,7 +93,10 @@ class LoginViewModelTest : BaseTest() {
 
     @Test
     fun `onLoginClick positive flow will emit LoginSuccess effect`() {
-        coEvery { userRepository.login(stubTestEmail, stubTestPassword) } returns stubTestUser
+        coEvery { userRepository.login(stubTestEmail, stubTestPassword) } coAnswers {
+            delay(5000)
+            stubTestUser
+        }
 
         viewModel.onEmailChange(stubTestEmail)
         viewModel.onPasswordChange(stubTestPassword)
@@ -108,9 +104,11 @@ class LoginViewModelTest : BaseTest() {
         runTest {
             viewModel.effect.test {
                 viewModel.onLoginClick()
-                coVerify { userRepository.login(stubTestEmail, stubTestPassword) }
+                assertEquals(true, state.value.isLoading)
+                advanceTimeBy(6000)
                 assertEquals(LoginUIEffect.LoginSuccess, awaitItem())
                 assertEquals(false, state.value.isLoading)
+                coVerify { userRepository.login(stubTestEmail, stubTestPassword) }
             }
         }
     }
@@ -119,7 +117,10 @@ class LoginViewModelTest : BaseTest() {
     fun `onLoginClick negative flow will update errorMessage state`() {
         val stubTestException = spyk<Exception>()
         val stubTestErrorMessage = "Oops"
-        coEvery { userRepository.login(stubTestEmail, stubTestPassword) } throws stubTestException
+        coEvery { userRepository.login(stubTestEmail, stubTestPassword) } coAnswers {
+            delay(5000)
+            throw stubTestException
+        }
         every { stubTestException.localizedMessage } returns stubTestErrorMessage andThen null
 
         viewModel.onEmailChange(stubTestEmail)
@@ -128,14 +129,18 @@ class LoginViewModelTest : BaseTest() {
         runTest {
             viewModel.effect.test {
                 viewModel.onLoginClick()
+                assertEquals(true, state.value.isLoading)
+                advanceTimeBy(6000)
                 assertEquals(stubTestErrorMessage, state.value.errorMessage)
+                assertEquals(false, state.value.isLoading)
 
                 viewModel.onLoginClick()
+                advanceTimeBy(6000)
                 assertEquals(stubTestFallbackErrorMessage, state.value.errorMessage)
-
-                coVerify(exactly = 2) { userRepository.login(stubTestEmail, stubTestPassword) }
-                expectNoEvents()
                 assertEquals(false, state.value.isLoading)
+
+                expectNoEvents()
+                coVerify(exactly = 2) { userRepository.login(stubTestEmail, stubTestPassword) }
             }
         }
     }
