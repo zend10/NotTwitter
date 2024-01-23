@@ -85,7 +85,7 @@ class ProfileViewModelTest : BaseTest() {
         assertEquals(stubTestLocalPosts, state.value.posts)
         assertEquals(true, state.value.isLoading)
 
-        // posts returns returns value
+        // posts returns value
         advanceTimeBy(6000)
         assertEquals(stubTestPosts, state.value.posts)
         assertEquals(false, state.value.isLoading)
