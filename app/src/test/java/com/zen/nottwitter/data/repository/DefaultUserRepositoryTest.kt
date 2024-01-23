@@ -1,9 +1,10 @@
 package com.zen.nottwitter.data.repository
 
+import app.cash.turbine.test
 import com.zen.nottwitter.core.BaseTest
 import com.zen.nottwitter.data.localstorage.LocalStorageProvider
+import com.zen.nottwitter.data.model.User
 import com.zen.nottwitter.data.network.FirebaseProvider
-import io.mockk.called
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.impl.annotations.MockK
@@ -34,8 +35,12 @@ class DefaultUserRepositoryTest : BaseTest() {
         coEvery { firebaseProvider.authenticate() } returns stubTestUser
         coEvery { localStorageProvider.saveUser(stubTestUser) } returns stubTestUser
         assertEquals(stubTestUser, repository.authenticate())
+        repository.user.test {
+            assertEquals(stubTestUser, awaitItem())
+        }
         coVerify {
             firebaseProvider.authenticate()
+            localStorageProvider.deleteUser()
             localStorageProvider.saveUser(stubTestUser)
         }
     }
@@ -44,21 +49,35 @@ class DefaultUserRepositoryTest : BaseTest() {
     fun `authenticate negative flow will return null`() = runTest {
         coEvery { firebaseProvider.authenticate() } returns null
         assertEquals(null, repository.authenticate())
+        repository.user.test {
+            assertEquals(User(), awaitItem())
+        }
         coVerify {
             firebaseProvider.authenticate()
-            localStorageProvider.saveUser(any()) wasNot called
+        }
+        coVerify(exactly = 0) {
+            localStorageProvider.deleteUser()
+            localStorageProvider.saveUser(any())
         }
     }
 
     @Test
-    fun `authenticate will throw an exception if get an exception`() {
+    fun `authenticate will throw an exception if get an exception`() = runTest {
         coEvery { firebaseProvider.authenticate() } throws Exception()
         assertThrows(Exception::class.java) {
-            runTest { repository.authenticate() }
+            kotlinx.coroutines.test.runTest {
+                repository.authenticate()
+            }
+        }
+        repository.user.test {
+            assertEquals(User(), awaitItem())
         }
         coVerify {
             firebaseProvider.authenticate()
-            localStorageProvider.saveUser(any()) wasNot called
+        }
+        coVerify(exactly = 0) {
+            localStorageProvider.deleteUser()
+            localStorageProvider.saveUser(any())
         }
     }
 
@@ -76,14 +95,18 @@ class DefaultUserRepositoryTest : BaseTest() {
             stubTestUser,
             repository.register(stubTestNickname, stubTestEmail, stubTestPassword)
         )
+        repository.user.test {
+            assertEquals(stubTestUser, awaitItem())
+        }
         coVerify {
             firebaseProvider.register(stubTestNickname, stubTestEmail, stubTestPassword)
+            localStorageProvider.deleteUser()
             localStorageProvider.saveUser(stubTestUser)
         }
     }
 
     @Test
-    fun `register will throw an exception if get an exception`() {
+    fun `register will throw an exception if get an exception`() = runTest {
         coEvery {
             firebaseProvider.register(
                 stubTestNickname,
@@ -92,11 +115,23 @@ class DefaultUserRepositoryTest : BaseTest() {
             )
         } throws Exception()
         assertThrows(Exception::class.java) {
-            runTest { repository.register(stubTestNickname, stubTestEmail, stubTestPassword) }
+            kotlinx.coroutines.test.runTest {
+                repository.register(
+                    stubTestNickname,
+                    stubTestEmail,
+                    stubTestPassword
+                )
+            }
+        }
+        repository.user.test {
+            assertEquals(User(), awaitItem())
         }
         coVerify {
             firebaseProvider.register(stubTestNickname, stubTestEmail, stubTestPassword)
-            localStorageProvider.saveUser(any()) wasNot called
+        }
+        coVerify(exactly = 0) {
+            localStorageProvider.deleteUser()
+            localStorageProvider.saveUser(any())
         }
     }
 
@@ -113,14 +148,18 @@ class DefaultUserRepositoryTest : BaseTest() {
             stubTestUser,
             repository.login(stubTestEmail, stubTestPassword)
         )
+        repository.user.test {
+            assertEquals(stubTestUser, awaitItem())
+        }
         coVerify {
             firebaseProvider.login(stubTestEmail, stubTestPassword)
+            localStorageProvider.deleteUser()
             localStorageProvider.saveUser(stubTestUser)
         }
     }
 
     @Test
-    fun `login will throw an exception if get an exception`() {
+    fun `login will throw an exception if get an exception`() = runTest {
         coEvery {
             firebaseProvider.login(
                 stubTestEmail,
@@ -128,20 +167,30 @@ class DefaultUserRepositoryTest : BaseTest() {
             )
         } throws Exception()
         assertThrows(Exception::class.java) {
-            runTest { repository.login(stubTestEmail, stubTestPassword) }
+            kotlinx.coroutines.test.runTest { repository.login(stubTestEmail, stubTestPassword) }
+        }
+        repository.user.test {
+            assertEquals(User(), awaitItem())
         }
         coVerify {
             firebaseProvider.login(stubTestEmail, stubTestPassword)
-            localStorageProvider.saveUser(any()) wasNot called
+        }
+        coVerify(exactly = 0) {
+            localStorageProvider.deleteUser()
+            localStorageProvider.saveUser(any())
         }
     }
 
     @Test
     fun `logout will delete user from local storage and logout from firebase`() = runTest {
-        repository.logout()
-        coVerify {
-            localStorageProvider.deleteUser()
-            firebaseProvider.logout()
+        repository.logoutTrigger.test {
+            repository.logout()
+            assertEquals(Unit, awaitItem())
+            coVerify {
+                localStorageProvider.deleteUser()
+                localStorageProvider.deleteUserPosts()
+                firebaseProvider.logout()
+            }
         }
     }
 

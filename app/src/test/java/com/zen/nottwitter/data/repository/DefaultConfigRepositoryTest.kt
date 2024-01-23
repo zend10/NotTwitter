@@ -24,4 +24,14 @@ class DefaultConfigRepositoryTest : BaseTest() {
     fun `getFallbackErrorMessage will return fallback error message String`() {
         assertEquals(stubTestFallbackErrorMessage, repository.getFallbackErrorMessage())
     }
+
+    @Test
+    fun `getPostConfig will return PostConfig`() {
+        assertEquals(stubTestPostConfig, repository.getPostConfig())
+    }
+
+    @Test
+    fun `getPaginationPerPageLimit will return pagination per page limit Int`() {
+        assertEquals(25, repository.getPaginationPerPageLimit())
+    }
 }
