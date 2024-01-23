@@ -4,7 +4,7 @@ import com.zen.nottwitter.data.model.Post
 import com.zen.nottwitter.data.repository.ContentRepository
 import com.zen.nottwitter.data.repository.UserRepository
 
-class GetUserPostsUserCase(
+class GetUserPostsUseCase(
     private val userRepository: UserRepository,
     private val contentRepository: ContentRepository
 ) : UseCase<GetUserPostsRequest, List<Post>> {

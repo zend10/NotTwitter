@@ -8,7 +8,7 @@ import com.zen.nottwitter.data.repository.DefaultUserRepository
 import com.zen.nottwitter.data.repository.UserRepository
 import com.zen.nottwitter.domain.usecase.CreatePostUseCase
 import com.zen.nottwitter.domain.usecase.GetLocalUserPostsUseCase
-import com.zen.nottwitter.domain.usecase.GetUserPostsUserCase
+import com.zen.nottwitter.domain.usecase.GetUserPostsUseCase
 import org.koin.dsl.module
 
 val dataModule = module {
@@ -17,6 +17,6 @@ val dataModule = module {
     single<ContentRepository> { DefaultContentRepository(get(), get()) }
 
     factory { CreatePostUseCase(get(), get()) }
-    factory { GetUserPostsUserCase(get(), get()) }
+    factory { GetUserPostsUseCase(get(), get()) }
     factory { GetLocalUserPostsUseCase(get(), get()) }
 }

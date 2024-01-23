@@ -6,7 +6,7 @@ import com.zen.nottwitter.data.repository.ContentRepository
 import com.zen.nottwitter.data.repository.UserRepository
 import com.zen.nottwitter.domain.usecase.GetLocalUserPostsUseCase
 import com.zen.nottwitter.domain.usecase.GetUserPostsRequest
-import com.zen.nottwitter.domain.usecase.GetUserPostsUserCase
+import com.zen.nottwitter.domain.usecase.GetUserPostsUseCase
 import com.zen.nottwitter.presentation.ui.base.BaseViewModel
 import com.zen.nottwitter.presentation.ui.base.DispatcherProvider
 import kotlinx.coroutines.launch
@@ -15,7 +15,7 @@ class ProfileViewModel(
     private val userRepository: UserRepository,
     private val contentRepository: ContentRepository,
     private val configRepository: ConfigRepository,
-    private val getUserPostsUserCase: GetUserPostsUserCase,
+    private val getUserPostsUseCase: GetUserPostsUseCase,
     private val getLocalUserPostsUseCase: GetLocalUserPostsUseCase,
     dispatchers: DispatcherProvider
 ) :
@@ -58,7 +58,7 @@ class ProfileViewModel(
         screenModelScope.launch(dispatchers.io) {
             try {
                 updateState { it.copy(isLoading = true) }
-                val posts = getUserPostsUserCase.execute(GetUserPostsRequest(false))
+                val posts = getUserPostsUseCase.execute(GetUserPostsRequest(false))
                 updateState { it.copy(posts = posts) }
             } catch (exception: Exception) {
                 // do nothing
@@ -88,7 +88,7 @@ class ProfileViewModel(
         screenModelScope.launch(dispatchers.io) {
             try {
                 updateState { it.copy(isLoadingNextPage = true) }
-                val posts = getUserPostsUserCase.execute(GetUserPostsRequest(true))
+                val posts = getUserPostsUseCase.execute(GetUserPostsRequest(true))
                 val newPosts = ArrayList(state.value.posts + posts)
                 updateState { it.copy(posts = newPosts) }
             } catch (exception: Exception) {

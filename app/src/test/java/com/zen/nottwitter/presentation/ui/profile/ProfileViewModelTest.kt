@@ -9,7 +9,7 @@ import com.zen.nottwitter.data.repository.ContentRepository
 import com.zen.nottwitter.data.repository.UserRepository
 import com.zen.nottwitter.domain.usecase.GetLocalUserPostsUseCase
 import com.zen.nottwitter.domain.usecase.GetUserPostsRequest
-import com.zen.nottwitter.domain.usecase.GetUserPostsUserCase
+import com.zen.nottwitter.domain.usecase.GetUserPostsUseCase
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.coVerifyOrder
@@ -40,7 +40,7 @@ class ProfileViewModelTest : BaseTest() {
     private lateinit var userRepository: UserRepository
 
     @MockK
-    private lateinit var getUserPostsUserCase: GetUserPostsUserCase
+    private lateinit var getUserPostsUseCase: GetUserPostsUseCase
 
     @MockK
     private lateinit var getLocalUserPostsUseCase: GetLocalUserPostsUseCase
@@ -57,7 +57,7 @@ class ProfileViewModelTest : BaseTest() {
             userRepository,
             contentRepository,
             configRepository,
-            getUserPostsUserCase,
+            getUserPostsUseCase,
             getLocalUserPostsUseCase,
             testDispatchers
         )
@@ -71,7 +71,7 @@ class ProfileViewModelTest : BaseTest() {
             delay(5000)
             stubTestLocalPosts
         }
-        coEvery { getUserPostsUserCase.execute(GetUserPostsRequest(false)) } coAnswers {
+        coEvery { getUserPostsUseCase.execute(GetUserPostsRequest(false)) } coAnswers {
             delay(10000)
             stubTestPosts
         }
@@ -92,7 +92,7 @@ class ProfileViewModelTest : BaseTest() {
 
         coVerifyOrder {
             getLocalUserPostsUseCase.execute(Unit)
-            getUserPostsUserCase.execute(GetUserPostsRequest(false))
+            getUserPostsUseCase.execute(GetUserPostsRequest(false))
         }
     }
 
@@ -124,7 +124,7 @@ class ProfileViewModelTest : BaseTest() {
 
     @Test
     fun `onRefresh will trigger getUserPostsUserCase and update posts state`() = runTest {
-        coEvery { getUserPostsUserCase.execute(GetUserPostsRequest(false)) } coAnswers {
+        coEvery { getUserPostsUseCase.execute(GetUserPostsRequest(false)) } coAnswers {
             delay(5000)
             stubTestPosts
         }
@@ -133,7 +133,7 @@ class ProfileViewModelTest : BaseTest() {
         advanceTimeBy(6000)
         assertEquals(stubTestPosts, state.value.posts)
         assertEquals(false, state.value.isLoading)
-        coVerify { getUserPostsUserCase.execute(GetUserPostsRequest(false)) }
+        coVerify { getUserPostsUseCase.execute(GetUserPostsRequest(false)) }
     }
 
     @Test
@@ -141,7 +141,7 @@ class ProfileViewModelTest : BaseTest() {
         runTest {
             every { configRepository.getPaginationPerPageLimit() } returns 2
             coEvery { getLocalUserPostsUseCase.execute(Unit) } returns stubTestPosts
-            coEvery { getUserPostsUserCase.execute(GetUserPostsRequest(true)) } coAnswers {
+            coEvery { getUserPostsUseCase.execute(GetUserPostsRequest(true)) } coAnswers {
                 delay(5000)
                 stubTestPosts
             }
@@ -161,7 +161,7 @@ class ProfileViewModelTest : BaseTest() {
             assertEquals(stubTestPosts + stubTestPosts + stubTestPosts, state.value.posts)
             assertEquals(false, state.value.isLoadingNextPage)
 
-            coVerify(exactly = 2) { getUserPostsUserCase.execute(GetUserPostsRequest(true)) }
+            coVerify(exactly = 2) { getUserPostsUseCase.execute(GetUserPostsRequest(true)) }
         }
 
     @Test
@@ -172,7 +172,7 @@ class ProfileViewModelTest : BaseTest() {
             viewModel.onLoadNextPage()
             assertEquals(0, state.value.posts.size)
 
-            coVerify(exactly = 0) { getUserPostsUserCase.execute(GetUserPostsRequest(true)) }
+            coVerify(exactly = 0) { getUserPostsUseCase.execute(GetUserPostsRequest(true)) }
         }
 
     @Test
@@ -180,7 +180,7 @@ class ProfileViewModelTest : BaseTest() {
         runTest {
             every { configRepository.getPaginationPerPageLimit() } returns 2
             coEvery { getLocalUserPostsUseCase.execute(Unit) } returns stubTestPosts
-            coEvery { getUserPostsUserCase.execute(GetUserPostsRequest(true)) } coAnswers {
+            coEvery { getUserPostsUseCase.execute(GetUserPostsRequest(true)) } coAnswers {
                 delay(5000)
                 stubTestPosts
             }
@@ -191,7 +191,7 @@ class ProfileViewModelTest : BaseTest() {
             viewModel.onLoadNextPage()
             viewModel.onLoadNextPage()
 
-            coVerify(exactly = 1) { getUserPostsUserCase.execute(GetUserPostsRequest(true)) }
+            coVerify(exactly = 1) { getUserPostsUseCase.execute(GetUserPostsRequest(true)) }
         }
 
     @Test
