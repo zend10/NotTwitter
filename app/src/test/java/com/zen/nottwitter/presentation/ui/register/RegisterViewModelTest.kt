@@ -1,28 +1,24 @@
 package com.zen.nottwitter.presentation.ui.register
 
 import app.cash.turbine.test
+import com.zen.nottwitter.core.BaseTest
 import com.zen.nottwitter.data.repository.ConfigRepository
 import com.zen.nottwitter.data.repository.UserRepository
-import com.zen.nottwitter.core.BaseTest
-import com.zen.nottwitter.core.MainCoroutineRule
-import com.zen.nottwitter.core.TestDispatchers
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.spyk
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.runTest
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
 import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class RegisterViewModelTest : BaseTest() {
 
-    private val testDispatchers: TestDispatchers = TestDispatchers()
     private lateinit var viewModel: RegisterViewModel
     private lateinit var state: StateFlow<RegisterUIState>
 
@@ -31,9 +27,6 @@ class RegisterViewModelTest : BaseTest() {
 
     @MockK
     private lateinit var configRepository: ConfigRepository
-
-    @get:Rule
-    val mainCoroutineRule = MainCoroutineRule(testDispatchers.testDispatcher)
 
     @Before
     override fun setUp() {
@@ -123,7 +116,10 @@ class RegisterViewModelTest : BaseTest() {
                 stubTestEmail,
                 stubTestPassword
             )
-        } returns stubTestUser
+        } coAnswers {
+            delay(5000)
+            stubTestUser
+        }
 
         viewModel.onNicknameChange(stubTestNickname)
         viewModel.onEmailChange(stubTestEmail)
@@ -132,6 +128,10 @@ class RegisterViewModelTest : BaseTest() {
         runTest {
             viewModel.effect.test {
                 viewModel.onRegisterClick()
+                assertEquals(true, state.value.isLoading)
+                advanceTimeBy(6000)
+                assertEquals(RegisterUIEffect.RegisterSuccess, awaitItem())
+                assertEquals(false, state.value.isLoading)
                 coVerify {
                     userRepository.register(
                         stubTestNickname,
@@ -139,8 +139,6 @@ class RegisterViewModelTest : BaseTest() {
                         stubTestPassword
                     )
                 }
-                assertEquals(RegisterUIEffect.RegisterSuccess, awaitItem())
-                assertEquals(false, state.value.isLoading)
             }
         }
     }
@@ -155,7 +153,10 @@ class RegisterViewModelTest : BaseTest() {
                 stubTestEmail,
                 stubTestPassword
             )
-        } throws stubTestException
+        } coAnswers {
+            delay(5000)
+            throw stubTestException
+        }
         every { stubTestException.localizedMessage } returns stubTestErrorMessage andThen null
 
         viewModel.onNicknameChange(stubTestNickname)
@@ -165,11 +166,18 @@ class RegisterViewModelTest : BaseTest() {
         runTest {
             viewModel.effect.test {
                 viewModel.onRegisterClick()
+                assertEquals(true, state.value.isLoading)
+                advanceTimeBy(6000)
                 assertEquals(stubTestErrorMessage, state.value.errorMessage)
+                assertEquals(false, state.value.isLoading)
 
                 viewModel.onRegisterClick()
+                assertEquals(true, state.value.isLoading)
+                advanceTimeBy(6000)
                 assertEquals(stubTestFallbackErrorMessage, state.value.errorMessage)
+                assertEquals(false, state.value.isLoading)
 
+                expectNoEvents()
                 coVerify(exactly = 2) {
                     userRepository.register(
                         stubTestNickname,
@@ -177,8 +185,6 @@ class RegisterViewModelTest : BaseTest() {
                         stubTestPassword
                     )
                 }
-                expectNoEvents()
-                assertEquals(false, state.value.isLoading)
             }
         }
     }
