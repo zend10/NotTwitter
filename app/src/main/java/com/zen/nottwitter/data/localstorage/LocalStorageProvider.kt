@@ -13,4 +13,6 @@ interface LocalStorageProvider {
     suspend fun getUserPosts(): List<Post>
     suspend fun saveUserPosts(posts: List<Post>): List<Post>
     suspend fun deleteUserPosts()
+
+    suspend fun deletePost(post: Post)
 }

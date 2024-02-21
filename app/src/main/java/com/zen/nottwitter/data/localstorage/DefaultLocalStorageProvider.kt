@@ -74,4 +74,11 @@ class DefaultLocalStorageProvider(private val realmClient: RealmClient) : LocalS
             delete(query)
         }
     }
+
+    override suspend fun deletePost(post: Post) {
+        realmClient.realmClient().write {
+            val query = this.query<PostEntity>("uid == $0", post.uid).find()
+            delete(query)
+        }
+    }
 }

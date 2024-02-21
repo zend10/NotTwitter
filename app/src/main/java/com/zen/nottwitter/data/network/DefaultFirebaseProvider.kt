@@ -154,6 +154,16 @@ class DefaultFirebaseProvider(
         }
     }
 
+    override suspend fun deletePost(post: Post): Post {
+        try {
+            firebaseClient.firestoreClient().collection(DB_POSTS).document(post.uid).delete()
+                .await()
+            return post
+        } catch (exception: Exception) {
+            throw exception
+        }
+    }
+
     override suspend fun getUserPosts(user: User, loadNextPage: Boolean): List<Post> {
         try {
             val storedPosts = if (loadNextPage) {

@@ -51,6 +51,16 @@ class DefaultContentRepository(
         return localStorageProvider.getPosts()
     }
 
+    override suspend fun deletePost(post: Post): Post {
+        try {
+            localStorageProvider.deletePost(post)
+            firebaseProvider.deletePost(post)
+            return post
+        } catch (exception: Exception) {
+            throw exception
+        }
+    }
+
     override suspend fun getUserPosts(user: User, loadNextPage: Boolean): List<Post> {
         try {
             val posts = firebaseProvider.getUserPosts(user, loadNextPage)
