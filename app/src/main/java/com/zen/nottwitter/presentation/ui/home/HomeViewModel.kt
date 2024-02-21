@@ -16,6 +16,8 @@ class HomeViewModel(
     dispatchers: DispatcherProvider
 ) : BaseViewModel<HomeUIState, HomeUIEffect>(HomeUIState(), dispatchers), HomeInteractionListener {
 
+    private var postToDelete: Post? = null
+
     init {
         listenToUser()
         listenToNewPost()
@@ -23,7 +25,8 @@ class HomeViewModel(
 
     private fun listenToUser() {
         screenModelScope.launch(dispatchers.io) {
-            userRepository.user.collect {
+            userRepository.user.collect { user ->
+                updateState { it.copy(user = user) }
                 loadLocalPosts()
                 loadPosts()
             }
@@ -67,6 +70,35 @@ class HomeViewModel(
 
     override fun onPostImageClick(imageUrl: String) {
         sendNewEffect(HomeUIEffect.ViewImage(imageUrl))
+    }
+
+    override fun onPostDeleteClick(post: Post) {
+        postToDelete = post
+        updateState { it.copy(deleteDialog = true) }
+    }
+
+    override fun onPostDeleteDialogPositiveCtaClick() {
+        screenModelScope.launch(dispatchers.io) {
+            if (postToDelete == null)
+                 return@launch
+            try {
+                updateState { it.copy(deleteDialog = false, isLoading = true) }
+                contentRepository.deletePost(postToDelete!!)
+                val currentPosts = state.value.posts.toMutableList()
+                currentPosts.remove(postToDelete)
+                updateState { it.copy(posts = currentPosts) }
+            } catch (exception: Exception) {
+                updateState { it.copy(errorMessage = "Delete failed") }
+            } finally {
+                updateState { it.copy(isLoading = false) }
+                postToDelete = null
+            }
+        }
+    }
+
+    override fun onPostDeleteDialogNegativeCtaClick() {
+        postToDelete = null
+        updateState { it.copy(deleteDialog = false) }
     }
 
     override fun onRefresh() {
