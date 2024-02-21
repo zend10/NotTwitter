@@ -37,6 +37,7 @@ import com.zen.nottwitter.data.model.Post
 import com.zen.nottwitter.presentation.ui.base.BaseScreen
 import com.zen.nottwitter.presentation.ui.component.ActionTopBar
 import com.zen.nottwitter.presentation.ui.component.EmptyScreen
+import com.zen.nottwitter.presentation.ui.component.GeneralAlertDialog
 import com.zen.nottwitter.presentation.ui.component.PostItem
 import com.zen.nottwitter.presentation.ui.editor.EditorScreen
 import com.zen.nottwitter.presentation.ui.viewer.ViewerScreen
@@ -115,6 +116,17 @@ class HomeScreen : BaseScreen<HomeViewModel, HomeUIState, HomeUIEffect, HomeInte
                 )
             }
         }
+
+        if (state.deleteDialog) {
+            GeneralAlertDialog(
+                onDismissRequest = listener::onPostDeleteDialogNegativeCtaClick,
+                title = "Delete Post",
+                message = "Are you sure you want to delete this post?",
+                positiveCta = "Yes",
+                negativeCta = "Back",
+                onPositiveCtaClick = listener::onPostDeleteDialogPositiveCtaClick
+            )
+        }
     }
 
     @Composable
@@ -132,8 +144,10 @@ class HomeScreen : BaseScreen<HomeViewModel, HomeUIState, HomeUIEffect, HomeInte
         LazyColumn(state = lazyListState) {
             items(state.posts) {
                 PostItem(
+                    user = state.user,
                     post = it,
                     onImageClick = listener::onPostImageClick,
+                    onDeletePostClick = listener::onPostDeleteClick
                 )
             }
             item(state.isLoadingNextPage) {
@@ -160,6 +174,18 @@ class HomeScreen : BaseScreen<HomeViewModel, HomeUIState, HomeUIEffect, HomeInte
             }
 
             override fun onPostImageClick(imageUrl: String) {
+                TODO("Not yet implemented")
+            }
+
+            override fun onPostDeleteClick(post: Post) {
+                TODO("Not yet implemented")
+            }
+
+            override fun onPostDeleteDialogPositiveCtaClick() {
+                TODO("Not yet implemented")
+            }
+
+            override fun onPostDeleteDialogNegativeCtaClick() {
                 TODO("Not yet implemented")
             }
 
