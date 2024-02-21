@@ -179,4 +179,33 @@ class HomeViewModelTest : BaseTest() {
 
             coVerify(exactly = 1) { contentRepository.getPosts(true) }
         }
+
+    @Test
+    fun `onPostDeleteClick will update state deleteDialog`() = runTest {
+        viewModel.onPostDeleteClick(stubTestPost)
+        assertEquals(true, state.value.deleteDialog)
+
+        // verify that stubTestPost is the one deleted
+        viewModel.onPostDeleteDialogPositiveCtaClick()
+        coVerify { contentRepository.deletePost(stubTestPost) }
+    }
+
+    @Test
+    fun `onPostDeleteDialogPositiveCtaClick positive flow will update state posts`() = runTest {
+        coEvery { contentRepository.deletePost(stubTestPosts[0]) } coAnswers {
+            delay(5000)
+            stubTestPosts[0]
+        }
+        coEvery { contentRepository.getPosts() } returns stubTestPosts
+
+        val expectedPosts = stubTestPosts.drop(0)
+
+        viewModel.onRefresh()
+        viewModel.onPostDeleteClick(stubTestPosts[0])
+        viewModel.onPostDeleteDialogPositiveCtaClick()
+
+        state.test {
+            assertEquals(expectedPosts, awaitItem().posts)
+        }
+    }
 }
